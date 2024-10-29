@@ -1,0 +1,75 @@
+/* Aseguramos que el body ocupe toda la altura de la pantalla */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Hacemos que el contenedor principal ocupe todo el espacio disponible */
+#login-section {
+  margin: 0; 
+  padding: 20px 0; 
+  background-image: url(../img/background.png);
+  background-size: cover;
+  background-position: center;
+  height: 100vh; 
+  padding-left: 0; 
+  padding-right: 0;
+}
+
+#login-section .card{
+  margin-left: 15%;
+  margin-right: 15%;
+}
+
+#boton-sesion {
+  display: block; 
+  margin: 0 auto; 
+}
+
+/* Configuramos el contenedor general para el footer sticky */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Forzamos el footer a estar al fondo */
+footer {
+  margin-top: auto;
+}
+
+@media only screen and (max-width: 767px) {
+  #recipes-section .card {
+      margin-bottom: 20px; 
+  }
+
+  #login-section .card{
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+}
+
+@media only screen and (max-width: 599px) {
+  #recipes-section .card {
+      margin-bottom: 15px; 
+  }
+
+  #login-section .card{
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+}
+
+@media only screen and (max-width: 424px) {
+  #recipes-section .card {
+      margin-bottom: 10px;
+  }
+
+  #login-section .card{
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+}

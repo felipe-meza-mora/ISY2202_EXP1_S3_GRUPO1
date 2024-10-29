@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="'Detalle - ' + ${receta.titulo}">Detalle - Receta</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white" href="/home">Recetas Populares</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-5">
+                    <li class="nav-item">
+                        <a class="nav-link active text-white" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
+                        <a class="nav-link text-white" th:href="@{/logout}" th:text="'Logout'"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"></a>
+                    </li>
+                    <li class="nav-item" th:if="${!#authorization.expression('isAuthenticated()')}">
+                        <a class="nav-link text-white" th:href="@{/login}" th:text="'Login'"></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
+
+    <!-- Sección principal -->
+    <section class="container mt-5">
+        <h2 class="text-center mb-5" th:text="${receta.titulo}"></h2>
+        <div class="row">
+            <div class="col-md-6">
+                <img th:src="@{/img/card/{imagenUrl}(imagenUrl=${receta.imagenUrl})}" class="img-fluid"
+                    th:alt="${receta.titulo}" style="border-radius: 2%;">
+            </div>
+            <div class="col-md-6">
+                <h4>Descripción</h4>
+                <hr style="border: 1px solid #dd5a5a; margin: 10px 0; width: 20%;">
+                <p th:text="${receta.descripcion}"></p>
+                <h4>Tiempo de Preparación</h4>
+                <hr style="border: 1px solid #dd5a5a; margin: 10px 0; width: 40%;">
+                <p th:text="${receta.tiempoPreparacion}"></p>
+                <h4>Pasos para preparar</h4>
+                <hr style="border: 1px solid #dd5a5a; margin: 10px 0; width: 35%;">
+                <p th:text="${receta.pasos}"></p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white pt-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <!-- Sección de información -->
+                <div class="col-md-4">
+                    <h5>Sobre Nosotros</h5>
+                    <p>En nuestra página, compartimos las mejores recetas para que disfrutes cocinando en casa. Desde
+                        platos tradicionales hasta recetas modernas.</p>
+                </div>
+
+                <!-- Sección de enlaces útiles -->
+                <div class="col-md-4">
+                    <h5>Enlaces Útiles</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">Inicio</a></li>
+                        <li><a href="#" class="text-white">Recetas Populares</a></li>
+                        <li><a href="#" class="text-white">Contáctanos</a></li>
+                        <li><a href="#" class="text-white">Política de Privacidad</a></li>
+                    </ul>
+                </div>
+
+                <!-- Sección de redes sociales -->
+                <div class="col-md-4">
+                    <h5>Síguenos</h5>
+                    <ul class="list-unstyled d-flex">
+                        <li class="ms-3"><a href="#" class="text-white"><i class="fab fa-facebook fa-2x"></i></a></li>
+                        <li class="ms-3"><a href="#" class="text-white"><i class="fab fa-instagram fa-2x"></i></a></li>
+                        <li class="ms-3"><a href="#" class="text-white"><i class="fab fa-twitter fa-2x"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sección de copyright -->
+            <div class="row mt-3">
+                <div class="col text-center">
+                    <p class="mb-0">&copy; 2024 Recetas Populares. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

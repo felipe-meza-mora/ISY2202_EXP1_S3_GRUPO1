@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Home - Recetas Populares</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white" href="/home">Recetas Populares</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-5">
+                    <li class="nav-item">
+                        <a class="nav-link active text-white" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
+                        <a class="nav-link text-white" th:href="@{/logout}" th:text="'Logout'"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"></a>
+                    </li>
+                    <li class="nav-item" th:if="${!#authorization.expression('isAuthenticated()')}">
+                        <a class="nav-link text-white" th:href="@{/login}" th:text="'Login'"></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
+
+
+
+    <section id="carousel-section">
+        <div id="recipeCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div th:each="receta, iterStat : ${recetas}"
+                    th:classappend="${iterStat.index == 0} ? 'active' : ''" class="carousel-item">
+                    <img th:src="@{/img/{imagenUrl}(imagenUrl=${receta.imagenUrl})}" class="d-block w-100"
+                        th:alt="${receta.titulo}" />
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5 th:text="${receta.titulo}"></h5>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#recipeCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#recipeCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </section>
+
+    <section id="recipes-section" class="container mt-5 mb-3">
+        <h2 class="text-center">Recetas Populares</h2>
+        <div class="row">
+            <div th:each="receta : ${recetas}" class="col-md-4 d-flex align-items-stretch mb-4">
+                <div class="card d-flex flex-column">
+                    <img th:src="@{/img/card/{imagenUrl}(imagenUrl=${receta.imagenUrl})}" class="card-img-top img-fluid"
+                        style="height: 250px; object-fit: cover" th:alt="${receta.titulo}" />
+                    <div class="card-body d-flex flex-column" style="flex-grow: 1;"> <!-- Cambios aquí -->
+                        <h5 class="card-title" th:text="${receta.titulo}"></h5>
+                        <hr style="border: 1px solid #636161; margin: 10px 0;">
+                        <p class="card-text mt-auto mb-auto" th:text="${#strings.substring(receta.descripcion, 0, 100)} + '...'">
+                        </p>
+                        <hr style="border: 1px solid #ccc; margin: 10px 0;">
+                        <p class="card-text mt-auto" th:text="'Tiempo de preparación: ' + ${receta.tiempoPreparacion}"></p>
+                        <div class="mt-auto">
+                            <a th:if="${#authorization.expression('isAuthenticated()')}"
+                                th:href="@{/recetas/{id}(id=${receta.id})}" class="btn btn-secondary">Ver Detalle</a>
+                            <a th:if="${not #authorization.expression('isAuthenticated()')}" th:href="@{/login}"
+                                class="btn btn-secondary">Más Detalle, Inicia sesión</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+
+    <footer class="bg-dark text-white pt-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <section class="col-md-4">
+                    <h5>Sobre Nosotros</h5>
+                    <p>
+                        En nuestra página, compartimos las mejores recetas para que
+                        disfrutes cocinando en casa. Desde platos tradicionales hasta
+                        recetas modernas.
+                    </p>
+                </section>
+
+                <section class="col-md-4">
+                    <h5>Enlaces Útiles</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">Inicio</a></li>
+                        <li><a href="#" class="text-white">Recetas Populares</a></li>
+                        <li><a href="#" class="text-white">Contáctanos</a></li>
+                        <li><a href="#" class="text-white">Política de Privacidad</a></li>
+                    </ul>
+                </section>
+
+                <section class="col-md-4">
+                    <h5>Síguenos</h5>
+                    <ul class="list-unstyled d-flex">
+                        <li class="ms-3">
+                            <a href="#" class="text-white"><i class="fab fa-facebook fa-2x"></i></a>
+                        </li>
+                        <li class="ms-3">
+                            <a href="#" class="text-white"><i class="fab fa-instagram fa-2x"></i></a>
+                        </li>
+                        <li class="ms-3">
+                            <a href="#" class="text-white"><i class="fab fa-twitter fa-2x"></i></a>
+                        </li>
+                    </ul>
+                </section>
+            </div>
+
+            <section class="row mt-3">
+                <div class="col text-center">
+                    <p class="mb-0">
+                        &copy; 2024 Recetas Populares. Todos los derechos reservados.
+                    </p>
+                </div>
+            </section>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
