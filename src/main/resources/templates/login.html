@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Login - Recetas Populares</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" th:href="@{/css/style.css}">   
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
@@ -39,7 +39,7 @@
                         <h3>Iniciar Sesión</h3>
                     </div>
                     <div class="card-body">
-                        <form id="loginForm" th:action="@{/login}" method="post" novalidate>
+                        <form id="loginForm" novalidate>
                             <div class="mb-3">
                                 <label for="username" class="form-label d-flex justify-content-center">Nombre de Usuario</label>
                                 <input type="text" class="form-control" id="username" name="username" required />
@@ -49,27 +49,27 @@
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label d-flex justify-content-center">Contraseña</label>
-                                <input type="password" class="form-control" id="password" name="password" />
+                                <input type="password" class="form-control" id="password" name="password" required />
                                 <div class="invalid-feedback">
                                     Por favor, introduce una contraseña válida.
                                 </div>
                             </div>
-                            <div th:if="${param.error}" class="alert alert-danger">
+                            <div id="errorAlert" class="alert alert-danger d-none">
                                 Usuario o contraseña incorrectos.
                             </div>
-                            <div th:if="${param.logout}" class="alert alert-success">
-                                Sesión cerrada exitosamente.
-                            </div>
-                            <button id="boton-sesion" type="submit" class="btn btn-secondary">
+                            <button type="button" class="btn btn-secondary w-100 mb-3" onclick="loginUser()">
                                 Iniciar Sesión
                             </button>
+                            <!-- Enlace a la página de registro -->
+                            <div class="text-center">
+                                <p>¿No tienes cuenta? <a href="/register" class="text-primary">Regístrate aquí</a></p>
+                            </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    
     
     <!-- Sección de pie de página -->
     <section id="footer-section">
@@ -120,49 +120,45 @@
         </footer>
     </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
-        (function () {
-            "use strict";
+        function loginUser() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
 
-            var forms = document.querySelectorAll("form");
+            // Crear el objeto de datos
+            const data = {
+                username,
+                password
+            };
 
-            Array.prototype.slice.call(forms).forEach(function (form) {
-                form.addEventListener(
-                    "submit",
-                    function (event) {
-                        var username = document.getElementById("username");
-                        var password = document.getElementById("password");
-
-                        username.classList.remove("is-valid", "is-invalid");
-                        password.classList.remove("is-valid", "is-invalid");
-
-                        if (!form.checkValidity()) {
-                            event.preventDefault();
-                            event.stopPropagation();
-
-                            if (!username.value) {
-                                username.classList.add("is-invalid");
-                            } else {
-                                username.classList.add("is-valid");
-                            }
-
-                            if (!password.value) {
-                                password.classList.add("is-invalid");
-                            } else {
-                                password.classList.add("is-valid");
-                            }
-                        } else {
-                            event.preventDefault();
-                            form.submit();
-                        }
-                    },
-                    false
-                );
+            // Llamada a la API para el login
+            fetch("/api/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Error en la autenticación");
+                }
+                return response.text(); // Cambia a .text() para recibir el JWT como texto
+            })
+            .then(token => {
+                // Almacenar el token en localStorage
+                localStorage.setItem("jwtToken", token);
+                console.log("Token JWT guardado:", token);
+                window.location.href = "/home"; // Redirige a la página principal después de iniciar sesión
+            })
+            .catch(error => {
+                console.error("Error al iniciar sesión:", error);
+                alert("Error al iniciar sesión");
             });
-        })();
+        }
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

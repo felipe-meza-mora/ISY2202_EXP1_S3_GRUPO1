@@ -27,7 +27,7 @@ public class RecetaController {
     }
 
     // Obtener una receta por su ID - Disponible para todos
-    @GetMapping("/recetas/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getRecetaById(@PathVariable("id") Long id) {
         try {
             Receta receta = recetaService.getRecetaById(id);

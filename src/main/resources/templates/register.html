@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Registro - Recetas Populares</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+    <!-- Sección de navegación -->
+    <section id="nav-section">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand text-white" href="/home">Recetas Populares</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-5">
+                        <li class="nav-item">
+                            <a class="nav-link active text-white" href="/home">Home</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </section>
+
+    <!-- Sección de registro -->
+    <section id="register-section" class="container-fluid mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h3>Registrarse</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="registerForm" novalidate>
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Nombre de Usuario</label>
+                                <input type="text" class="form-control" id="username" name="username" required />
+                                <div class="invalid-feedback">
+                                    Por favor, introduce un nombre de usuario válido.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Correo Electrónico</label>
+                                <input type="email" class="form-control" id="email" name="email" required />
+                                <div class="invalid-feedback">
+                                    Por favor, introduce un correo electrónico válido.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" required />
+                                <div class="invalid-feedback">
+                                    Por favor, introduce tu nombre.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="apellido" class="form-label">Apellido</label>
+                                <input type="text" class="form-control" id="apellido" name="apellido" required />
+                                <div class="invalid-feedback">
+                                    Por favor, introduce tu apellido.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" id="password" name="password" required minlength="8" />
+                                <div class="invalid-feedback">
+                                    La contraseña debe tener al menos 8 caracteres.
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary w-100" onclick="registerUser()">Registrarse</button>
+                        </form>
+                        <div class="text-center mt-3">
+                            <p>¿Ya tienes una cuenta? <a href="/login" class="text-primary">Inicia sesión aquí</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function registerUser() {
+            // Reset de mensajes de error
+            document.querySelectorAll('.form-control, .form-select').forEach(input => {
+                input.classList.remove('is-invalid');
+            });
+
+            // Obtener los valores del formulario
+            const username = document.getElementById("username").value;
+            const email = document.getElementById("email").value;
+            const nombre = document.getElementById("nombre").value;
+            const apellido = document.getElementById("apellido").value;
+            const password = document.getElementById("password").value;
+            const rol = "ROLE_USER"; 
+
+            let valid = true;
+
+            // Validaciones y despliegue de mensajes de error
+            if (!username) {
+                document.getElementById("username").classList.add("is-invalid");
+                valid = false;
+            }
+            if (!email || !validateEmail(email)) {
+                document.getElementById("email").classList.add("is-invalid");
+                valid = false;
+            }
+            if (!nombre) {
+                document.getElementById("nombre").classList.add("is-invalid");
+                valid = false;
+            }
+            if (!apellido) {
+                document.getElementById("apellido").classList.add("is-invalid");
+                valid = false;
+            }
+            if (!password || password.length < 8) {
+                document.getElementById("password").classList.add("is-invalid");
+                valid = false;
+            }
+            
+
+            if (!valid) {
+                return;
+            }
+
+            // Crear el objeto de datos
+            const data = {
+                username,
+                email,
+                nombre,
+                apellido,
+                password,
+                rol
+            };
+
+            // Llamada a la API para registrar el usuario
+            fetch("/api/usuarios/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = "/login"; // Redirigir al login después de registrarse
+                } else {
+                    return response.json().then(error => {
+                        // Manejo de errores del servidor
+                        alert(error.message || "Error al registrar el usuario.");
+                    });
+                }
+            })
+            .catch(error => {
+                alert("Ocurrió un error: " + error.message);
+            });
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(String(email).toLowerCase());
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -37,6 +37,15 @@ public class HomeController {
         return "login";  // Cargar la plantilla Thymeleaf "login.html"
     }
 
+    // Cargar la página de registro
+    @GetMapping("/register")
+    public String register() {
+        return "register";  // Cargar la plantilla Thymeleaf "register.html"
+    }
+    
+
+
+
     // Mostrar el detalle de una receta por ID
     @GetMapping("/recetas/{id}")
     public String detalleReceta(@PathVariable("id") Long id, Model model) {

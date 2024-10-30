@@ -33,7 +33,7 @@ public class SecurityConfig {
             .csrf().disable()
             .authorizeHttpRequests(auth -> auth
                 // Rutas públicas (accesibles sin autenticación)
-                .requestMatchers("/", "/home", "/login", "/css/**", "/js/**", "/img/**").permitAll()
+                .requestMatchers("/", "/home", "/login","/register", "/css/**", "/js/**", "/img/**").permitAll()
 
                 // Rutas de autenticación y registro de usuarios
                 .requestMatchers("/api/auth/login", "/api/usuarios/register").permitAll()
@@ -45,10 +45,13 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/usuarios").hasRole("ADMIN")
 
                 // Rutas para recetas
-                .requestMatchers(HttpMethod.GET, "/api/recetas/**").permitAll() 
+                .requestMatchers(HttpMethod.GET, "/api/recetas/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/recetas").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/recetas/{id}").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/recetas/{id}").hasRole("ADMIN")
+
+                // Rutas para vistas de recetas, requieren autenticación
+                .requestMatchers("/recetas/**").permitAll()
 
                 // Cualquier otra solicitud necesita autenticación
                 .anyRequest().authenticated()

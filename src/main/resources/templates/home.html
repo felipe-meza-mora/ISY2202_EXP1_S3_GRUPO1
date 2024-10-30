@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <!-- Barra de navegación -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand text-white" href="/home">Recetas Populares</a>
@@ -36,8 +37,7 @@
 
     <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
 
-
-
+    <!-- Sección del carrusel -->
     <section id="carousel-section">
         <div id="recipeCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
@@ -61,6 +61,7 @@
         </div>
     </section>
 
+    <!-- Sección de recetas -->
     <section id="recipes-section" class="container mt-5 mb-3">
         <h2 class="text-center">Recetas Populares</h2>
         <div class="row">
@@ -68,7 +69,7 @@
                 <div class="card d-flex flex-column">
                     <img th:src="@{/img/card/{imagenUrl}(imagenUrl=${receta.imagenUrl})}" class="card-img-top img-fluid"
                         style="height: 250px; object-fit: cover" th:alt="${receta.titulo}" />
-                    <div class="card-body d-flex flex-column" style="flex-grow: 1;"> <!-- Cambios aquí -->
+                    <div class="card-body d-flex flex-column" style="flex-grow: 1;">
                         <h5 class="card-title" th:text="${receta.titulo}"></h5>
                         <hr style="border: 1px solid #636161; margin: 10px 0;">
                         <p class="card-text mt-auto mb-auto" th:text="${#strings.substring(receta.descripcion, 0, 100)} + '...'">
@@ -76,19 +77,18 @@
                         <hr style="border: 1px solid #ccc; margin: 10px 0;">
                         <p class="card-text mt-auto" th:text="'Tiempo de preparación: ' + ${receta.tiempoPreparacion}"></p>
                         <div class="mt-auto">
-                            <a th:if="${#authorization.expression('isAuthenticated()')}"
-                                th:href="@{/recetas/{id}(id=${receta.id})}" class="btn btn-secondary">Ver Detalle</a>
-                            <a th:if="${not #authorization.expression('isAuthenticated()')}" th:href="@{/login}"
-                                class="btn btn-secondary">Más Detalle, Inicia sesión</a>
+                            <a href="javascript:void(0);" class="btn btn-secondary" 
+                             th:onclick="|verDetalle(${receta.id})|" id="detalle-btn-${receta.id}">
+                               Más Detalle, Inicia sesión
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    
 
-
+    <!-- Pie de página -->
     <footer class="bg-dark text-white pt-4 mt-5">
         <div class="container">
             <div class="row">
@@ -137,7 +137,55 @@
         </div>
     </footer>
 
+    <!-- Scripts de Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script para redirigir al detalle de la receta si el usuario está autenticado -->
+    <script>
+    function verDetalle(id) {
+        const token = localStorage.getItem("jwtToken");
+        if (token) {
+            // Realiza una solicitud fetch para verificar el token y obtener el detalle de la receta
+            fetch(`/api/recetas/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Si la respuesta es correcta, redirige a la vista de detalles en el frontend
+                    window.location.href = `/recetas/${id}`;
+                } else if (response.status === 401) {
+                    // Si el token es inválido, redirige al login
+                    alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
+                    window.location.href = "/login";
+                } else {
+                    alert("Error al cargar el detalle de la receta.");
+                }
+            })
+            .catch(error => {
+                console.error("Error en la solicitud:", error);
+                alert("Error al cargar el detalle de la receta.");
+            });
+        } else {
+            // Redirige al login si no hay token
+            alert("Por favor, inicia sesión para ver el detalle.");
+            window.location.href = "/login";
+        }
+    }
+
+        // Cambiar el texto de los botones si hay un token
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem("jwtToken");
+            if (token) {
+                document.querySelectorAll("[id^=detalle-btn-]").forEach(button => {
+                    button.textContent = "Ver Detalle";
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
