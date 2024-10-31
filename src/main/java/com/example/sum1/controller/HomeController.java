@@ -1,6 +1,7 @@
 package com.example.sum1.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -43,10 +44,8 @@ public class HomeController {
         return "register";  // Cargar la plantilla Thymeleaf "register.html"
     }
     
-
-
-
     // Mostrar el detalle de una receta por ID
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/recetas/{id}")
     public String detalleReceta(@PathVariable("id") Long id, Model model) {
         try {
@@ -65,3 +64,4 @@ public class HomeController {
         return "access-denied";  // Cargar la plantilla "access-denied.html"
     }
 }
+

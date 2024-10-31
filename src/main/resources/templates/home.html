@@ -87,7 +87,6 @@
             </div>
         </div>
     </section>
-
     <!-- Pie de página -->
     <footer class="bg-dark text-white pt-4 mt-5">
         <div class="container">
@@ -144,9 +143,10 @@
     <script>
     function verDetalle(id) {
         const token = localStorage.getItem("jwtToken");
+        alert(token);
         if (token) {
             // Realiza una solicitud fetch para verificar el token y obtener el detalle de la receta
-            fetch(`/api/recetas/${id}`, {
+            fetch(`/recetas/${id}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,

@@ -124,13 +124,13 @@
         function loginUser() {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
-
+    
             // Crear el objeto de datos
             const data = {
                 username,
                 password
             };
-
+    
             // Llamada a la API para el login
             fetch("/api/auth/login", {
                 method: "POST",
@@ -149,6 +149,7 @@
                 // Almacenar el token en localStorage
                 localStorage.setItem("jwtToken", token);
                 console.log("Token JWT guardado:", token);
+                alert("Token JWT guardado: " + token); // Muestra el token en un alert
                 window.location.href = "/home"; // Redirige a la página principal después de iniciar sesión
             })
             .catch(error => {
@@ -157,6 +158,7 @@
             });
         }
     </script>
+    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>

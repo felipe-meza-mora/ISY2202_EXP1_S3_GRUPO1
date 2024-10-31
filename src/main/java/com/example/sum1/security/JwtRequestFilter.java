@@ -28,34 +28,54 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-
         final String authorizationHeader = request.getHeader("Authorization");
-
+        logger.info("Authorization Header");
+        logger.debug(authorizationHeader);
+    
         String username = null;
         String jwt = null;
-
+    
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwt);
+                logger.info("Username");
+                logger.debug(username);
+                
             } catch (ExpiredJwtException e) {
-                logger.warn("Token expirado");
+                logger.warn("Token expirado", e); // Registra la advertencia con la excepción
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expirado.");
+                return;
+            } catch (Exception e) {
+                logger.error("Error al extraer el username del token", e); // Registra el error con la excepción
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error en el token.");
+                return;
             }
         }
-        
-
+    
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
+    
             if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+    
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                logger.info("Username: {}");
+                logger.debug(username);
+            } else {
+                logger.info("Username: {}");
+                logger.warn( username);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token no válido.");
+                return;
             }
+        } else {
+            logger.warn("No se encontró el username en el token o ya hay autenticación.");
         }
+    
         chain.doFilter(request, response);
     }
+    
+
 }

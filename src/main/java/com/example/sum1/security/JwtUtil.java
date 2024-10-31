@@ -1,5 +1,6 @@
 package com.example.sum1.security;
 
+import com.example.sum1.model.Usuario;
 import org.springframework.beans.factory.annotation.Value;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -16,7 +17,6 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-
     // Inyecta la clave secreta desde application.properties
     @Value("${myapp.secret-key}")
     private String SECRET_KEY;
@@ -29,6 +29,11 @@ public class JwtUtil {
     // Extraer el nombre de usuario del token
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    // Extraer el rol del usuario del token
+    public String extractUserRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
     // Extraer la fecha de expiración del token
@@ -56,10 +61,11 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    // Generar un token JWT con el nombre de usuario
-    public String generateToken(String username) {
+    // Generar un token JWT con el usuario y su rol
+    public String generateToken(Usuario usuario) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username);
+        claims.put("role", usuario.getRol().name()); // Añadir el rol al token
+        return createToken(claims, usuario.getUsername());
     }
 
     // Crear un token JWT con los "claims" y el sujeto (nombre de usuario)

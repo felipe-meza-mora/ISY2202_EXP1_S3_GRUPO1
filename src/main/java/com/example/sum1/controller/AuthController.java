@@ -43,8 +43,8 @@ public class AuthController {
             return ResponseEntity.status(401).body("Contraseña incorrecta");
         }
 
-        // Generar el token JWT
-        String jwt = jwtUtil.generateToken(usuarioDB.getUsername());
+        // Generar el token JWT incluyendo el rol del usuario
+        String jwt = jwtUtil.generateToken(usuarioDB);
 
         logger.info("Login exitoso para el usuario: {}", usuario.getUsername());
         logger.info("Rol del usuario {}: {}", usuario.getUsername(), usuarioDB.getRol().name());
