@@ -10,7 +10,6 @@
 </head>
 
 <body>
-
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand text-white" href="/home">Recetas Populares</a>
@@ -23,11 +22,18 @@
                     <li class="nav-item">
                         <a class="nav-link active text-white" href="/home">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <!-- Botón de login/logout -->
-                        <a id="loginButton" class="nav-link text-white" href="#" onclick="toggleLogin()"></a>
+                    <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
+                        <a class="nav-link text-white" th:href="@{/logout}" th:text="'Logout'"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"></a>
+                    </li>
+                    <li class="nav-item" th:if="${!#authorization.expression('isAuthenticated()')}">
+                        <a class="nav-link text-white" th:href="@{/login}" th:text="'Login'"></a>
+                    </li>
+                    <li class="nav-item" th:if="${!#authorization.expression('isAuthenticated()')}">
+                        <a class="nav-link text-white" th:href="@{/register}" th:text="'Registrate'"></a>
                     </li>
                 </ul>
+                
             </div>
         </div>
     </nav>
@@ -70,10 +76,10 @@
                 <div class="col-md-4">
                     <h5>Enlaces Útiles</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-white">Inicio</a></li>
-                        <li><a href="#" class="text-white">Recetas Populares</a></li>
-                        <li><a href="#" class="text-white">Contáctanos</a></li>
-                        <li><a href="#" class="text-white">Política de Privacidad</a></li>
+                        <li><a href="/home" class="text-white">Inicio</a></li>
+                        <li><a href="/recetas" class="text-white">Recetas Populares</a></li>
+                        <li><a href="/contacto" class="text-white">Contáctanos</a></li>
+                        <li><a href="/politica-privacidad" class="text-white">Política de Privacidad</a></li>
                     </ul>
                 </div>
 
@@ -96,36 +102,6 @@
             </div>
         </div>
     </footer>
-    <script>
-        // Función para alternar entre login y logout
-        function toggleLogin() {
-            const token = localStorage.getItem("jwtToken");
-
-            if (token) {
-                // Si hay un token, eliminamos el token y cambiamos el botón a "Login"
-                localStorage.removeItem("jwtToken");
-                document.getElementById("loginButton").textContent = "Login";
-                window.location.href = "/login"; // Redirigir al login
-            } else {
-                // Si no hay token, redirigimos al usuario al login
-                window.location.href = "/login";
-            }
-        }
-
-        // Configurar el estado del botón al cargar la página
-        document.addEventListener("DOMContentLoaded", () => {
-            const token = localStorage.getItem("jwtToken");
-            const loginButton = document.getElementById("loginButton");
-
-            if (token) {
-                // Si hay token, mostramos "Logout"
-                loginButton.textContent = "Logout";
-            } else {
-                // Si no hay token, mostramos "Login"
-                loginButton.textContent = "Login";
-            }
-        });
-    </script>
 
    <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}" ></script>
 </body>

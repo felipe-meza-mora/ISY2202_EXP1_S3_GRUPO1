@@ -8,6 +8,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.example.sum1.model.Receta;
 import com.example.sum1.service.RecetaService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.security.Principal;
 import java.util.List;
 
@@ -64,6 +67,18 @@ public class HomeController {
     @GetMapping("/access-denied")
     public String accessDenied() {
         return "access-denied";  // Cargar la plantilla "access-denied.html"
+    }
+
+
+    @PostMapping("/logout")
+    public String logout(HttpServletResponse response, @CookieValue(value = "jwt", required = false) Cookie jwtCookie) {
+        // Eliminar la cookie jwt
+        if (jwtCookie != null) {
+            jwtCookie.setMaxAge(0); // Establecer la edad máxima a 0 para eliminar la cookie
+            jwtCookie.setPath("/"); // Asegúrate de que el path sea correcto
+            response.addCookie(jwtCookie); // Agregar la cookie modificada a la respuesta
+        }
+        return "Logout successful"; // Mensaje opcional
     }
 }
 

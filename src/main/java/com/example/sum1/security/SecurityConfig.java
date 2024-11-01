@@ -38,7 +38,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 // Rutas públicas (accesibles sin autenticación)
-                .requestMatchers("/", "/home", "/login", "/register", "/css/**", "/js/**", "/img/**", "/bootstrap/**").permitAll()
+                .requestMatchers("/", "/home", "/login", "/logout","/register", "/css/**", "/js/**", "/img/**", "/bootstrap/**").permitAll()
                 // Rutas de autenticación y registro de usuarios
                 .requestMatchers("/api/auth/login", "/api/auth/check", "/api/usuarios/register").permitAll() // Agregado aquí
                 // Rutas específicas para usuarios y administradores
