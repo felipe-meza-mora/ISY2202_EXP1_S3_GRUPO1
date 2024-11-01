@@ -17,37 +17,30 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    // Inyecta la clave secreta desde application.properties
     @Value("${myapp.secret-key}")
     private String SECRET_KEY;
-                                                                               
-    // Genera una clave de tipo Key utilizando la clave secreta
+    
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
-    // Extraer el nombre de usuario del token
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // Extraer el rol del usuario del token
     public String extractUserRole(String token) {
         return extractClaim(token, claims -> claims.get("role", String.class));
     }
 
-    // Extraer la fecha de expiración del token
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    // Extraer un solo "claim" (reclamación) del token
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
-    // Extraer todos los "claims" del token
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -56,19 +49,16 @@ public class JwtUtil {
                 .getBody();
     }
 
-    // Verificar si el token ha expirado
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    // Generar un token JWT con el usuario y su rol
     public String generateToken(Usuario usuario) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", usuario.getRol().name()); // Añadir el rol al token
+        claims.put("role", usuario.getRol().name());
         return createToken(claims, usuario.getUsername());
     }
 
-    // Crear un token JWT con los "claims" y el sujeto (nombre de usuario)
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .setClaims(claims)
@@ -79,7 +69,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Validar si el token es válido para un usuario
     public Boolean validateToken(String token, String username) {
         final String extractedUsername = extractUsername(token);
         return (extractedUsername.equals(username) && !isTokenExpired(token));

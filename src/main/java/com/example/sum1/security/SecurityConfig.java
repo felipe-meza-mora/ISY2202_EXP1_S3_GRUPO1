@@ -1,8 +1,6 @@
 package com.example.sum1.security;
 
-import com.example.sum1.security.JwtRequestFilter;
 import com.example.sum1.service.CustomUserDetailsService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +8,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -30,7 +28,6 @@ public class SecurityConfig {
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
-
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
@@ -41,48 +38,49 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 // Rutas públicas (accesibles sin autenticación)
-                .requestMatchers("/", "/home", "/login","/register", "/css/**", "/js/**", "/img/**").permitAll()
-
+                .requestMatchers("/", "/home", "/login", "/register", "/css/**", "/js/**", "/img/**", "/bootstrap/**").permitAll()
                 // Rutas de autenticación y registro de usuarios
-                .requestMatchers("/api/auth/login", "/api/usuarios/register").permitAll()
-
+                .requestMatchers("/api/auth/login", "/api/auth/check", "/api/usuarios/register").permitAll() // Agregado aquí
                 // Rutas específicas para usuarios y administradores
                 .requestMatchers(HttpMethod.GET, "/api/usuarios/{username}").hasAnyRole("USER", "ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/usuarios/{id}").hasAnyRole("USER", "ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/usuarios/{id}").hasAnyRole("USER", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/usuarios").hasRole("ADMIN")
-
                 // Rutas para recetas
                 .requestMatchers(HttpMethod.GET, "/api/recetas/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/recetas").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/recetas/{id}").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/recetas/{id}").hasRole("ADMIN")
-
                 // Rutas para vistas de recetas, requieren autenticación
-                .requestMatchers("/recetas/**").permitAll()
+                .requestMatchers("/recetas/**").hasRole("ADMIN")
                 // Cualquier otra solicitud necesita autenticación
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .exceptionHandling(exceptionHandling -> 
-            exceptionHandling
-                .accessDeniedPage("/access-denied") // Redirigir a la página de acceso denegado
-           )
+            .exceptionHandling(exceptionHandling ->
+                exceptionHandling.accessDeniedPage("/access-denied") // Redirigir a la página de acceso denegado
+            )
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder securityPasswordEncoder() { // Renombrado
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
-        auth.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
-        return auth.build();
+    public AuthenticationManager securityAuthenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception { // Renombrado
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthenticationProvider securityAuthenticationProvider() { // Renombrado
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(customUserDetailsService);
+        authenticationProvider.setPasswordEncoder(securityPasswordEncoder());
+        return authenticationProvider;
     }
 }

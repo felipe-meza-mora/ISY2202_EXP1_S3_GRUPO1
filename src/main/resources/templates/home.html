@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Home - Recetas Populares</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}">
 </head>
 
 <body>
@@ -76,7 +76,7 @@
                         <div class="mt-auto">
                             <a href="javascript:void(0);" class="btn btn-secondary" 
                              th:onclick="|verDetalle(${receta.id})|" id="detalle-btn-${receta.id}">
-                               Más Detalle, Inicia sesión
+                               Más Detalle
                             </a>
                         </div>
                     </div>
@@ -84,6 +84,7 @@
             </div>
         </div>
     </section>
+
     <!-- Pie de página -->
     <footer class="bg-dark text-white pt-4 mt-5">
         <div class="container">
@@ -134,93 +135,70 @@
     </footer>
 
     <!-- Scripts de Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}" ></script>
 
     <!-- Script para redirigir al detalle de la receta si el usuario está autenticado -->
     <script>
     function verDetalle(id) {
-        const token = localStorage.getItem("jwtToken");
-        if (token) {
-            // Realiza una solicitud fetch para verificar el token y obtener el detalle de la receta
-            fetch(`/recetas/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Si la respuesta es correcta, redirige a la vista de detalles en el frontend
-                    window.location.href = `/recetas/${id}`;
-                } else if (response.status === 401) {
-                    // Si el token es inválido, redirige al login
-                    alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
-                    window.location.href = "/login";
-                } else {
-                    alert("Error al cargar el detalle de la receta.");
-                }
-            })
-            .catch(error => {
-                console.error("Error en la solicitud:", error);
+        // Realiza una solicitud fetch para obtener el detalle de la receta
+        fetch(`/recetas/${id}`, {
+            method: 'GET',
+            credentials: 'include', // Incluye las cookies en la solicitud
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                // Si la respuesta es correcta, redirige a la vista de detalles en el frontend
+                window.location.href = `/recetas/${id}`;
+            } else if (response.status === 401) {
+                // Si el usuario no está autenticado, redirige al login
+                alert("Sesión expirada. Por favor, inicia sesión de nuevo.");
+                window.location.href = "/login";
+            } else {
                 alert("Error al cargar el detalle de la receta.");
-            });
+            }
+        })
+        .catch(error => {
+            console.error("Error en la solicitud:", error);
+            alert("Error al cargar el detalle de la receta.");
+        });
+    }
+
+    // Cambiar el texto de los botones si el usuario está autenticado
+    document.addEventListener("DOMContentLoaded", () => {
+        // Realiza una solicitud para verificar la autenticación
+        fetch("/api/auth/check", {
+            method: 'GET',
+            credentials: 'include' // Incluye las cookies en la solicitud
+        })
+        .then(response => {
+            const loginButton = document.getElementById("loginButton");
+            if (response.ok) {
+                // Si la respuesta es correcta, significa que el usuario está autenticado
+                loginButton.textContent = "Logout";
+            } else {
+                // Si no está autenticado
+                loginButton.textContent = "Login";
+            }
+        })
+        .catch(error => {
+            console.error("Error al verificar el estado de autenticación:", error);
+        });
+    });
+
+    // Función para alternar entre login y logout
+    function toggleLogin() {
+        const button = document.getElementById("loginButton");
+        if (button.textContent === "Logout") {
+            // Si se hace logout, envía la solicitud para cerrar sesión
+            document.getElementById("logout-form").submit(); // Esto enviará el formulario para logout
         } else {
+            // Si se hace login, redirigir al usuario al login
             window.location.href = "/login";
         }
     }
-
-        // Cambiar el texto de los botones si hay un token
-        document.addEventListener("DOMContentLoaded", () => {
-            const token = localStorage.getItem("jwtToken");
-            if (token) {
-                document.querySelectorAll("[id^=detalle-btn-]").forEach(button => {
-                    button.textContent = "Ver Detalle";
-                });
-            }
-        });
-    </script>
-    <script>
-        let loggenIn = false;
-
-        function checkLogin() {
-            const button = document.getElementById("loginButton");
-            const token = localStorage.getItem("jwtToken");
-            if (token) {
-                loggenIn = true;
-            }
-        }
-    </script>
-
-    <script>
-        // Función para alternar entre login y logout
-        function toggleLogin() {
-            const token = localStorage.getItem("jwtToken");
-
-            if (token) {
-                // Si hay un token, eliminamos el token y cambiamos el botón a "Login"
-                localStorage.removeItem("jwtToken");
-                document.getElementById("loginButton").textContent = "Login";
-                window.location.href = "/login"; // Redirigir al login
-            } else {
-                // Si no hay token, redirigimos al usuario al login
-                window.location.href = "/login";
-            }
-        }
-
-        // Configurar el estado del botón al cargar la página
-        document.addEventListener("DOMContentLoaded", () => {
-            const token = localStorage.getItem("jwtToken");
-            const loginButton = document.getElementById("loginButton");
-
-            if (token) {
-                // Si hay token, mostramos "Logout"
-                loginButton.textContent = "Logout";
-            } else {
-                // Si no hay token, mostramos "Login"
-                loginButton.textContent = "Login";
-            }
-        });
     </script>
 </body>
 

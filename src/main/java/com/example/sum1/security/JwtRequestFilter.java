@@ -1,6 +1,8 @@
 package com.example.sum1.security;
 
 import com.example.sum1.service.CustomUserDetailsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,12 +14,15 @@ import io.jsonwebtoken.ExpiredJwtException;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtRequestFilter.class);
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
@@ -28,54 +33,55 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        final String authorizationHeader = request.getHeader("Authorization");
-        logger.info("Authorization Header");
-        logger.debug(authorizationHeader);
-    
-        String username = null;
+        // Obtener el token desde la cookie
         String jwt = null;
-    
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7);
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("jwt".equals(cookie.getName())) { // Asegúrate de que el nombre de la cookie es "jwt"
+                    jwt = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        logger.info("Token JWT desde cookie: {}", jwt);
+
+        String username = null;
+
+        if (jwt != null) {
             try {
                 username = jwtUtil.extractUsername(jwt);
-                logger.info("Username");
-                logger.debug(username);
-                
+                logger.info("Username: {}", username);
             } catch (ExpiredJwtException e) {
-                logger.warn("Token expirado", e); // Registra la advertencia con la excepción
+                logger.warn("Token expirado", e);
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expirado.");
                 return;
             } catch (Exception e) {
-                logger.error("Error al extraer el username del token", e); // Registra el error con la excepción
+                logger.error("Error al extraer el username del token", e);
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error en el token.");
                 return;
             }
         }
-    
+
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-    
+
             if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-    
+
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                logger.info("Username: {}");
-                logger.debug(username);
+                logger.info("Usuario autenticado: {}", username);
             } else {
-                logger.info("Username: {}");
-                logger.warn( username);
+                logger.warn("Token no válido para el usuario: {}", username);
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token no válido.");
                 return;
             }
         } else {
             logger.warn("No se encontró el username en el token o ya hay autenticación.");
         }
-    
+
         chain.doFilter(request, response);
     }
-    
-
 }

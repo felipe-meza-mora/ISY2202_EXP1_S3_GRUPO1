@@ -1,14 +1,14 @@
 package com.example.sum1.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.example.sum1.model.Receta;
 import com.example.sum1.service.RecetaService;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -25,10 +25,13 @@ public class HomeController {
 
     // Mostrar la página principal con todas las recetas
     @GetMapping("/home")
-    public String home(Model model) {
+    public String home(Model model, @AuthenticationPrincipal Principal principal) {
         List<Receta> recetas = recetaService.getAllRecetas();
         System.out.println("Recetas obtenidas: " + recetas);
+        
         model.addAttribute("recetas", recetas);
+        model.addAttribute("isAuthenticated", principal != null); // Verificar si el usuario está autenticado
+
         return "home";  // Cargar la plantilla Thymeleaf "home.html"
     }
 
@@ -45,7 +48,6 @@ public class HomeController {
     }
     
     // Mostrar el detalle de una receta por ID
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/recetas/{id}")
     public String detalleReceta(@PathVariable("id") Long id, Model model) {
         try {

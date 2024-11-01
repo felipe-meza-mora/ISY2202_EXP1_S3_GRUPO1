@@ -5,8 +5,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Login - Recetas Populares</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}">
 </head>
 
 <body>
@@ -137,17 +137,17 @@
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
+                credentials: 'include' // Esto es importante para enviar la cookie
             })
             .then(response => {
                 if (!response.ok) {
                     throw new Error("Error en la autenticación");
                 }
-                return response.text(); // Cambia a .text() para recibir el JWT como texto
+                return response.text(); // Esto puede ser cualquier respuesta que desees
             })
-            .then(token => {
-                localStorage.setItem("jwtToken", token);
-                console.log("Token JWT guardado:", token);
+            .then(message => {
+                console.log("Respuesta del servidor:", message);
                 window.location.href = "/home"; 
             })
             .catch(error => {
@@ -157,8 +157,8 @@
         }
     </script>
     
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}" ></script>
 </body>
 
 </html>
