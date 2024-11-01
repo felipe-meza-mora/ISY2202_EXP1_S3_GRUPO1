@@ -59,7 +59,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/api/recetas/{id}").hasRole("ADMIN")
 
                 // Rutas para vistas de recetas, requieren autenticación
-                .requestMatchers("/recetas/**").hasRole("ADMIN")
+                .requestMatchers("/recetas/**").permitAll()
                 // Cualquier otra solicitud necesita autenticación
                 .anyRequest().authenticated()
             )

@@ -7,26 +7,29 @@ body {
   overflow-x: hidden;
 }
 
-/* Hacemos que el contenedor principal ocupe todo el espacio disponible */
-#login-section {
-  margin: 0; 
-  padding: 20px 0; 
+/* Sección de login */
+#login-section,
+#register-section {
+  margin: 0;
+  padding: 20px 0;
   background-image: url(../img/background.png);
   background-size: cover;
   background-position: center;
-  height: 100vh; 
-  padding-left: 0; 
+  height: 100vh;
+  padding-left: 0;
   padding-right: 0;
 }
 
-#login-section .card{
+/* Estilos para las tarjetas de login y registro */
+#login-section .card,
+#register-section .card {
   margin-left: 15%;
   margin-right: 15%;
 }
 
 #boton-sesion {
-  display: block; 
-  margin: 0 auto; 
+  display: block;
+  margin: 0 auto;
 }
 
 /* Configuramos el contenedor general para el footer sticky */
@@ -41,34 +44,29 @@ footer {
   margin-top: auto;
 }
 
+/* Media queries para dispositivos móviles */
 @media only screen and (max-width: 767px) {
-  #recipes-section .card {
-      margin-bottom: 20px; 
-  }
-
-  #login-section .card{
+  #recipes-section .card,
+  #login-section .card,
+  #register-section .card {
     margin-left: 10%;
     margin-right: 10%;
   }
 }
 
 @media only screen and (max-width: 599px) {
-  #recipes-section .card {
-      margin-bottom: 15px; 
-  }
-
-  #login-section .card{
+  #recipes-section .card,
+  #login-section .card,
+  #register-section .card {
     margin-left: 10%;
     margin-right: 10%;
   }
 }
 
 @media only screen and (max-width: 424px) {
-  #recipes-section .card {
-      margin-bottom: 10px;
-  }
-
-  #login-section .card{
+  #recipes-section .card,
+  #login-section .card,
+  #register-section .card {
     margin-left: 10%;
     margin-right: 10%;
   }

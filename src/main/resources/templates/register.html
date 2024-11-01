@@ -33,7 +33,7 @@
     <!-- Sección de registro -->
     <section id="register-section" class="container-fluid mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-header text-center">
                         <h3>Registrarse</h3>
@@ -41,49 +41,98 @@
                     <div class="card-body">
                         <form id="registerForm" novalidate>
                             <div class="mb-3">
-                                <label for="username" class="form-label">Nombre de Usuario</label>
+                                <label for="username" class="form-label d-flex justify-content-center">Nombre de Usuario</label>
                                 <input type="text" class="form-control" id="username" name="username" required />
                                 <div class="invalid-feedback">
                                     Por favor, introduce un nombre de usuario válido.
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="email" class="form-label">Correo Electrónico</label>
+                                <label for="email" class="form-label d-flex justify-content-center">Correo Electrónico</label>
                                 <input type="email" class="form-control" id="email" name="email" required />
                                 <div class="invalid-feedback">
                                     Por favor, introduce un correo electrónico válido.
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="nombre" class="form-label">Nombre</label>
+                                <label for="nombre" class="form-label d-flex justify-content-center">Nombre</label>
                                 <input type="text" class="form-control" id="nombre" name="nombre" required />
                                 <div class="invalid-feedback">
                                     Por favor, introduce tu nombre.
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="apellido" class="form-label">Apellido</label>
+                                <label for="apellido" class="form-label d-flex justify-content-center">Apellido</label>
                                 <input type="text" class="form-control" id="apellido" name="apellido" required />
                                 <div class="invalid-feedback">
                                     Por favor, introduce tu apellido.
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="password" class="form-label">Contraseña</label>
+                                <label for="password" class="form-label d-flex justify-content-center">Contraseña</label>
                                 <input type="password" class="form-control" id="password" name="password" required minlength="8" />
                                 <div class="invalid-feedback">
                                     La contraseña debe tener al menos 8 caracteres.
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-primary w-100" onclick="registerUser()">Registrarse</button>
+                            <button type="button" class="btn btn-secondary w-100 mb-3" onclick="registerUser()">Registrarse</button>
+                            <div class="text-center">
+                                <p>¿Ya tienes una cuenta? <a href="/login" class="text-primary">Inicia sesión aquí</a></p>
+                            </div>
                         </form>
-                        <div class="text-center mt-3">
-                            <p>¿Ya tienes una cuenta? <a href="/login" class="text-primary">Inicia sesión aquí</a></p>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
+    
+      <!-- Sección de pie de página -->
+      <section id="footer-section">
+        <footer class="bg-dark text-white pt-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5>Sobre Nosotros</h5>
+                        <p>
+                            En nuestra página, compartimos las mejores recetas para que
+                            disfrutes cocinando en casa.
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Enlaces Útiles</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white">Inicio</a></li>
+                            <li><a href="#" class="text-white">Recetas Populares</a></li>
+                            <li><a href="#" class="text-white">Contáctanos</a></li>
+                            <li>
+                                <a href="#" class="text-white">Política de Privacidad</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h5>Síguenos</h5>
+                        <ul class="list-unstyled d-flex">
+                            <li class="ms-3">
+                                <a href="#" class="text-white"><i class="fab fa-facebook fa-2x"></i></a>
+                            </li>
+                            <li class="ms-3">
+                                <a href="#" class="text-white"><i class="fab fa-instagram fa-2x"></i></a>
+                            </li>
+                            <li class="ms-3">
+                                <a href="#" class="text-white"><i class="fab fa-twitter fa-2x"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col text-center">
+                        <p class="mb-0">
+                            &copy; 2024 Recetas Populares. Todos los derechos reservados.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </section>
 
     <script>
@@ -125,7 +174,6 @@
                 valid = false;
             }
             
-
             if (!valid) {
                 return;
             }

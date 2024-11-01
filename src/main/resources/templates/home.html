@@ -23,12 +23,9 @@
                     <li class="nav-item">
                         <a class="nav-link active text-white" href="/home">Home</a>
                     </li>
-                    <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
-                        <a class="nav-link text-white" th:href="@{/logout}" th:text="'Logout'"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"></a>
-                    </li>
-                    <li class="nav-item" th:if="${!#authorization.expression('isAuthenticated()')}">
-                        <a class="nav-link text-white" th:href="@{/login}" th:text="'Login'"></a>
+                    <li class="nav-item">
+                        <!-- Botón de login/logout -->
+                        <a id="loginButton" class="nav-link text-white" href="#" onclick="toggleLogin()"></a>
                     </li>
                 </ul>
             </div>
@@ -143,7 +140,6 @@
     <script>
     function verDetalle(id) {
         const token = localStorage.getItem("jwtToken");
-        alert(token);
         if (token) {
             // Realiza una solicitud fetch para verificar el token y obtener el detalle de la receta
             fetch(`/recetas/${id}`, {
@@ -170,8 +166,6 @@
                 alert("Error al cargar el detalle de la receta.");
             });
         } else {
-            // Redirige al login si no hay token
-            alert("Por favor, inicia sesión para ver el detalle.");
             window.location.href = "/login";
         }
     }
@@ -183,6 +177,48 @@
                 document.querySelectorAll("[id^=detalle-btn-]").forEach(button => {
                     button.textContent = "Ver Detalle";
                 });
+            }
+        });
+    </script>
+    <script>
+        let loggenIn = false;
+
+        function checkLogin() {
+            const button = document.getElementById("loginButton");
+            const token = localStorage.getItem("jwtToken");
+            if (token) {
+                loggenIn = true;
+            }
+        }
+    </script>
+
+    <script>
+        // Función para alternar entre login y logout
+        function toggleLogin() {
+            const token = localStorage.getItem("jwtToken");
+
+            if (token) {
+                // Si hay un token, eliminamos el token y cambiamos el botón a "Login"
+                localStorage.removeItem("jwtToken");
+                document.getElementById("loginButton").textContent = "Login";
+                window.location.href = "/login"; // Redirigir al login
+            } else {
+                // Si no hay token, redirigimos al usuario al login
+                window.location.href = "/login";
+            }
+        }
+
+        // Configurar el estado del botón al cargar la página
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem("jwtToken");
+            const loginButton = document.getElementById("loginButton");
+
+            if (token) {
+                // Si hay token, mostramos "Logout"
+                loginButton.textContent = "Logout";
+            } else {
+                // Si no hay token, mostramos "Login"
+                loginButton.textContent = "Login";
             }
         });
     </script>
