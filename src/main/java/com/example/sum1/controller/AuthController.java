@@ -3,14 +3,16 @@ package com.example.sum1.controller;
 import com.example.sum1.model.Usuario;
 import com.example.sum1.security.JwtUtil;
 import com.example.sum1.service.UsuarioService;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.security.Principal;
 import java.util.Optional;
@@ -19,7 +21,6 @@ import java.util.Optional;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     private UsuarioService usuarioService;
@@ -29,20 +30,19 @@ public class AuthController {
 
     @Autowired
     private JwtUtil jwtUtil;
-
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Usuario usuario) {
-        Optional<Usuario> optionalUsuario = usuarioService.buscarPorUsername(usuario.getUsername());
+    public ResponseEntity<?> login(@RequestParam("username") String username, 
+                                @RequestParam("password") String password, 
+                                HttpServletResponse response) {
+        Optional<Usuario> optionalUsuario = usuarioService.buscarPorUsername(username);
 
         if (optionalUsuario.isEmpty()) {
-            logger.error("Usuario no encontrado: {}", usuario.getUsername());
             return ResponseEntity.status(404).body("Usuario no encontrado");
         }
 
         Usuario usuarioDB = optionalUsuario.get();
 
-        if (!passwordEncoder.matches(usuario.getPassword(), usuarioDB.getPassword())) {
-            logger.warn("Contraseña incorrecta para el usuario: {}", usuario.getUsername());
+        if (!passwordEncoder.matches(password, usuarioDB.getPassword())) {
             return ResponseEntity.status(401).body("Contraseña incorrecta");
         }
 
@@ -51,19 +51,18 @@ public class AuthController {
 
         // Configurar la cookie
         ResponseCookie cookie = ResponseCookie.from("jwt", jwt)
-                .httpOnly(true)  // Evita el acceso a la cookie desde JavaScript
-                .secure(true)    // Solo se envía a través de HTTPS
-                .path("/")       // Disponible en toda la aplicación
-                .maxAge(3600)    // Tiempo de vida de la cookie (en segundos)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(3600)
                 .build();
 
-        logger.info("Login exitoso para el usuario: {}", usuario.getUsername());
-        logger.info("Rol del usuario {}: {}", usuario.getUsername(), usuarioDB.getRol().name());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        // Retornar una respuesta vacía con la cookie configurada
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body("Login exitoso");
+        // Redirigir al usuario a la página principal
+        return ResponseEntity.status(302)
+                .header(HttpHeaders.LOCATION, "/home")
+                .build();
     }
 
     // Verificar si el usuario está autenticado

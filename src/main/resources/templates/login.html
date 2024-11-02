@@ -39,7 +39,8 @@
                         <h3>Iniciar Sesión</h3>
                     </div>
                     <div class="card-body">
-                        <form id="loginForm" novalidate>
+                        <!-- Formulario de login -->
+                        <form th:action="@{/api/auth/login}" method="post" novalidate>
                             <div class="mb-3">
                                 <label for="username" class="form-label d-flex justify-content-center">Nombre de Usuario</label>
                                 <input type="text" class="form-control" id="username" name="username" required />
@@ -54,10 +55,11 @@
                                     Por favor, introduce una contraseña válida.
                                 </div>
                             </div>
-                            <div id="errorAlert" class="alert alert-danger d-none">
+                            <!-- Mensaje de error -->
+                            <div th:if="${param.error}" class="alert alert-danger">
                                 Usuario o contraseña incorrectos.
                             </div>
-                            <button type="button" class="btn btn-secondary w-100 mb-3" onclick="loginUser()">
+                            <button type="submit" class="btn btn-secondary w-100 mb-3">
                                 Iniciar Sesión
                             </button>
                             <!-- Enlace a la página de registro -->
@@ -89,9 +91,7 @@
                             <li><a href="#" class="text-white">Inicio</a></li>
                             <li><a href="#" class="text-white">Recetas Populares</a></li>
                             <li><a href="#" class="text-white">Contáctanos</a></li>
-                            <li>
-                                <a href="#" class="text-white">Política de Privacidad</a>
-                            </li>
+                            <li><a href="#" class="text-white">Política de Privacidad</a></li>
                         </ul>
                     </div>
                     <div class="col-md-4">
@@ -120,45 +120,8 @@
         </footer>
     </section>
 
-    <script>
-        function loginUser() {
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-    
-            // Crear el objeto de datos
-            const data = {
-                username,
-                password
-            };
-    
-            // Llamada a la API para el login
-            fetch("/api/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data),
-                credentials: 'include' // Esto es importante para enviar la cookie
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Error en la autenticación");
-                }
-                return response.text(); // Esto puede ser cualquier respuesta que desees
-            })
-            .then(message => {
-                console.log("Respuesta del servidor:", message);
-                window.location.href = "/home"; 
-            })
-            .catch(error => {
-                console.error("Error al iniciar sesión:", error);
-                alert("Error al iniciar sesión");
-            });
-        }
-    </script>
-    
-    
-    <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}" ></script>
+    <!-- Bootstrap JS -->
+    <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
 </body>
 
 </html>
