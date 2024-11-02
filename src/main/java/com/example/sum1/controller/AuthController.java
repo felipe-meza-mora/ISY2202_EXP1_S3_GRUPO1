@@ -69,9 +69,9 @@ public class AuthController {
     @GetMapping("/check")
     public ResponseEntity<Void> checkAuthentication(Principal principal) {
         if (principal != null) {
-            return ResponseEntity.ok().build(); // Usuario autenticado
+            return ResponseEntity.ok().build(); 
         } else {
-            return ResponseEntity.status(401).build(); // Usuario no autenticado
+            return ResponseEntity.status(401).build();
         }
     }
 }
