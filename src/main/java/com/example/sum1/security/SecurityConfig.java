@@ -40,7 +40,7 @@ public class SecurityConfig {
                 // Rutas públicas (accesibles sin autenticación)
                 .requestMatchers("/", "/home", "/login", "/logout","/register", "/css/**", "/js/**", "/img/**", "/bootstrap/**").permitAll()
                 // Rutas de autenticación y registro de usuarios
-                .requestMatchers("/api/auth/login", "/api/auth/check", "/api/usuarios/register").permitAll() 
+                .requestMatchers("/api/auth/login", "/api/auth/check", "/api/usuarios/register").permitAll() // Agregado aquí
                 // Rutas específicas para usuarios y administradores
                 .requestMatchers(HttpMethod.GET, "/api/usuarios/{username}").hasAnyRole("USER", "ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/usuarios/{id}").hasAnyRole("USER", "ADMIN")
@@ -60,24 +60,24 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .exceptionHandling(exceptionHandling ->
-                exceptionHandling.accessDeniedPage("/access-denied")
+                exceptionHandling.accessDeniedPage("/access-denied") // Redirigir a la página de acceso denegado
             )
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
     @Bean
-    public PasswordEncoder securityPasswordEncoder() { 
+    public PasswordEncoder securityPasswordEncoder() { // Renombrado
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager securityAuthenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception { 
+    public AuthenticationManager securityAuthenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception { // Renombrado
         return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
-    public AuthenticationProvider securityAuthenticationProvider() { 
+    public AuthenticationProvider securityAuthenticationProvider() { // Renombrado
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(customUserDetailsService);
         authenticationProvider.setPasswordEncoder(securityPasswordEncoder());

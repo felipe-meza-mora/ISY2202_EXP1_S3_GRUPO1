@@ -33,21 +33,21 @@ public class HomeController {
         System.out.println("Recetas obtenidas: " + recetas);
         
         model.addAttribute("recetas", recetas);
-        model.addAttribute("isAuthenticated", principal != null); 
+        model.addAttribute("isAuthenticated", principal != null); // Verificar si el usuario está autenticado
 
-        return "home"; 
+        return "home";  // Cargar la plantilla Thymeleaf "home.html"
     }
 
     // Cargar la página de login
     @GetMapping("/login")
     public String login() {
-        return "login";  
+        return "login";  // Cargar la plantilla Thymeleaf "login.html"
     }
 
     // Cargar la página de registro
     @GetMapping("/register")
     public String register() {
-        return "register"; 
+        return "register";  // Cargar la plantilla Thymeleaf "register.html"
     }
     
     // Mostrar el detalle de una receta por ID
@@ -56,17 +56,17 @@ public class HomeController {
         try {
             Receta receta = recetaService.getRecetaById(id);
             model.addAttribute("receta", receta);
-            return "detalle-receta"; 
+            return "detalle-receta";  // Cargar la plantilla "detalle-receta.html"
         } catch (RuntimeException e) {
             e.printStackTrace();
-            return "error";  
+            return "error";  // Cargar una plantilla de error en caso de fallo
         }
     }
 
     // Página de acceso denegado
     @GetMapping("/access-denied")
     public String accessDenied() {
-        return "access-denied"; 
+        return "access-denied";  // Cargar la plantilla "access-denied.html"
     }
 
 
@@ -74,11 +74,14 @@ public class HomeController {
     public String logout(HttpServletResponse response, @CookieValue(value = "jwt", required = false) Cookie jwtCookie) {
         // Eliminar la cookie jwt
         if (jwtCookie != null) {
-            jwtCookie.setMaxAge(0); 
-            jwtCookie.setPath("/"); 
-            response.addCookie(jwtCookie);
+            jwtCookie.setMaxAge(0); // Establecer la edad máxima a 0 para eliminar la cookie
+            jwtCookie.setPath("/"); // Asegurarse de que se elimine en todo el contexto de la aplicación
+            response.addCookie(jwtCookie); // Agregar la cookie modificada a la respuesta
         }
-        return "Logout successful"; 
+
+        // Redirigir a la página de inicio después de hacer logout
+        return "redirect:/home";
     }
+    
 }
 

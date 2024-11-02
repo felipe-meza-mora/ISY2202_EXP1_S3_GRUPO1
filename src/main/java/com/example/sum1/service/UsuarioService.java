@@ -22,7 +22,7 @@ public class UsuarioService {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    @Qualifier("applicationPasswordEncoder")
+    @Qualifier("applicationPasswordEncoder") // Asegúrate de que el nombre coincida
     private PasswordEncoder passwordEncoder;
 
     private void validarUsuario(Usuario usuario) {

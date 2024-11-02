@@ -25,21 +25,6 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @PostMapping("/register")
-    public ResponseEntity<?> registrarUsuario(@Valid @RequestBody Usuario usuario) {
-        // Chequear validaciones previas
-        if (usuarioService.existePorUsername(usuario.getUsername())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("El nombre de usuario ya está en uso.");
-        }
-        if (usuarioService.existePorEmail(usuario.getEmail())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("El correo electrónico ya está en uso.");
-        }
-
-        // Si no hay errores, registra el usuario
-        Usuario nuevoUsuario = usuarioService.registrarUsuario(usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
-    }
-
     // Obtener todos los usuarios (GET) - Solo ROLE_ADMIN puede acceder
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping

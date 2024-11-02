@@ -16,22 +16,22 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ApplicationConfig {
 
     @Autowired
-    private CustomUserDetailsService customUserDetailsService; 
+    private CustomUserDetailsService customUserDetailsService; // Inyectar el CustomUserDetailsService
 
     @Bean
-    public AuthenticationManager customAuthenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager customAuthenticationManager(AuthenticationConfiguration config) throws Exception { // Renombrar aquí
         return config.getAuthenticationManager();
     }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(customUserDetailsService); 
+        authenticationProvider.setUserDetailsService(customUserDetailsService); // Usar el CustomUserDetailsService
         authenticationProvider.setPasswordEncoder(applicationPasswordEncoder());
         return authenticationProvider;
     }
     @Bean
-    @Primary 
+    @Primary // Marcar este bean como el principal
     public PasswordEncoder applicationPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }

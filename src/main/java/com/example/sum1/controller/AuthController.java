@@ -12,8 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-
 import java.security.Principal;
 import java.util.Optional;
 
@@ -69,9 +67,9 @@ public class AuthController {
     @GetMapping("/check")
     public ResponseEntity<Void> checkAuthentication(Principal principal) {
         if (principal != null) {
-            return ResponseEntity.ok().build(); 
+            return ResponseEntity.ok().build(); // Usuario autenticado
         } else {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(401).build(); // Usuario no autenticado
         }
     }
 }
