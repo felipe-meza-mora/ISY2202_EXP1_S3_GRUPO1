@@ -10,12 +10,16 @@ import com.example.sum1.service.RecetaService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.Principal;
 import java.util.List;
 
 @Controller
 public class HomeController {
+
+    private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
     @Autowired
     private RecetaService recetaService;
@@ -30,7 +34,7 @@ public class HomeController {
     @GetMapping("/home")
     public String home(Model model, @AuthenticationPrincipal Principal principal) {
         List<Receta> recetas = recetaService.getAllRecetas();
-        System.out.println("Recetas obtenidas: " + recetas);
+        logger.info("Recetas obtenidas: {}", recetas);
         
         model.addAttribute("recetas", recetas);
         model.addAttribute("isAuthenticated", principal != null); // Verificar si el usuario está autenticado
@@ -58,8 +62,12 @@ public class HomeController {
             model.addAttribute("receta", receta);
             return "detalle-receta";  // Cargar la plantilla "detalle-receta.html"
         } catch (RuntimeException e) {
-            e.printStackTrace();
-            return "error";  // Cargar una plantilla de error en caso de fallo
+            // Registrar el error en el log sin exponer detalles al usuario
+            logger.error("Error al obtener la receta con ID: " + id, e);
+
+            // Mensaje genérico para el usuario
+            model.addAttribute("errorMessage", "Receta no encontrada. Intenta con otro ID.");
+            return "error";  // Cargar una plantilla de error genérica
         }
     }
 
@@ -69,7 +77,7 @@ public class HomeController {
         return "access-denied";  // Cargar la plantilla "access-denied.html"
     }
 
-
+    // Cerrar sesión y eliminar el JWT de las cookies
     @PostMapping("/logout")
     public String logout(HttpServletResponse response, @CookieValue(value = "jwt", required = false) Cookie jwtCookie) {
         // Eliminar la cookie jwt
@@ -82,6 +90,4 @@ public class HomeController {
         // Redirigir a la página de inicio después de hacer logout
         return "redirect:/home";
     }
-    
 }
-
