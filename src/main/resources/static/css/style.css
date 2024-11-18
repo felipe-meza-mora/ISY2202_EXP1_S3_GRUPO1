@@ -7,41 +7,69 @@ body {
   overflow-x: hidden;
 }
 
-/* Sección de login */
+/* Sección de login y registro */
 #login-section,
 #register-section {
   margin: 0;
-  padding: 20px 0;
+  padding: 0;
   background-image: url(../img/background.png);
   background-size: cover;
   background-position: center;
   height: 100vh;
-  padding-left: 0;
-  padding-right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 /* Estilos para las tarjetas de login y registro */
 #login-section .card,
 #register-section .card {
-  margin-left: 15%;
-  margin-right: 15%;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 15px;
+  overflow: hidden;
+  margin: auto;
 }
 
-#boton-sesion {
-  display: block;
-  margin: 0 auto;
+/* Estilos para el formulario */
+.form-label {
+  font-weight: bold;
 }
 
-/* Configuramos el contenedor general para el footer sticky */
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+.form-control {
+  border-radius: 10px;
 }
 
-/* Forzamos el footer a estar al fondo */
-footer {
-  margin-top: auto;
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+  border-radius: 10px;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+/* Estilos para el carousel */
+#carousel-section .carousel-item img {
+  height: 300px;
+  object-fit: cover;
+}
+
+#carousel-section .carousel-caption {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+/* Estilos para las tarjetas de recetas */
+#recipes-section .card {
+  transition: transform 0.3s ease;
+}
+
+#recipes-section .card:hover {
+  transform: translateY(-10px);
 }
 
 /* Media queries para dispositivos móviles */
@@ -49,8 +77,8 @@ footer {
   #recipes-section .card,
   #login-section .card,
   #register-section .card {
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
@@ -58,8 +86,8 @@ footer {
   #recipes-section .card,
   #login-section .card,
   #register-section .card {
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
@@ -67,7 +95,7 @@ footer {
   #recipes-section .card,
   #login-section .card,
   #register-section .card {
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-left: auto;
+    margin-right: auto;
   }
 }

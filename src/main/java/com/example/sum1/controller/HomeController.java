@@ -10,6 +10,8 @@ import com.example.sum1.service.RecetaService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,16 +80,31 @@ public class HomeController {
     }
 
     // Cerrar sesión y eliminar el JWT de las cookies
-    @PostMapping("/logout")
-    public String logout(HttpServletResponse response, @CookieValue(value = "jwt", required = false) Cookie jwtCookie) {
-        // Eliminar la cookie jwt
+    @GetMapping("/logout")
+    public String logout(
+            HttpServletResponse response,
+            HttpSession session,
+            @CookieValue(value = "jwt", required = false) Cookie jwtCookie) {
+        // Eliminar la cookie JWT si existe
         if (jwtCookie != null) {
             jwtCookie.setMaxAge(0); // Establecer la edad máxima a 0 para eliminar la cookie
             jwtCookie.setPath("/"); // Asegurarse de que se elimine en todo el contexto de la aplicación
             response.addCookie(jwtCookie); // Agregar la cookie modificada a la respuesta
         }
 
+        // Invalidar la sesión actual
+        if (session != null) {
+            session.invalidate();
+        }
+
+        // Eliminar la cookie JSESSIONID en el cliente
+        Cookie jsessionCookie = new Cookie("JSESSIONID", null);
+        jsessionCookie.setMaxAge(0); // Eliminar la cookie
+        jsessionCookie.setPath("/"); // Asegurarte de que se elimine para todo el contexto
+        response.addCookie(jsessionCookie);
+
         // Redirigir a la página de inicio después de hacer logout
         return "redirect:/home";
     }
+
 }

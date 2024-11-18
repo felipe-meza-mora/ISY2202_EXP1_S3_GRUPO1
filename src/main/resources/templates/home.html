@@ -7,50 +7,46 @@
     <title>Home - Recetas Populares</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/fontawesome/css/all.min.css}">
 </head>
 
 <body>
     <!-- Barra de navegación -->
-   <!-- Barra de navegación -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand text-white" href="/home">Recetas Populares</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-5">
-                <li class="nav-item">
-                    <a class="nav-link active text-white" href="/home">Home</a>
-                </li>
-                <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
-                    <a class="nav-link text-white" th:href="@{/logout}" th:text="'Logout'"
-                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"></a>
-                </li>
-                <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>                    
-                <li class="nav-item" th:if="${!#authorization.expression('isAuthenticated()')}">
-                    <a class="nav-link text-white" th:href="@{/login}" th:text="'Login'"></a>
-                </li>
-                <li class="nav-item" th:if="${!#authorization.expression('isAuthenticated()')}">
-                    <a class="nav-link text-white" th:href="@{/register}" th:text="'Registrate'"></a>
-                </li>
-            </ul>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white" href="/home">Recetas Populares</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active text-white" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
+                        <a class="nav-link text-white" th:href="@{/logout}" th:text="'Logout'"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"></a>
+                    </li>
+                    <form id="logout-form" th:action="@{/logout}"  style="display: none;"></form>
+                    <li class="nav-item" th:if="${!#authorization.expression('isAuthenticated()')}">
+                        <a class="nav-link text-white" th:href="@{/login}" th:text="'Login'"></a>
+                    </li>
+                    <li class="nav-item" th:if="${!#authorization.expression('isAuthenticated()')}">
+                        <a class="nav-link text-white" th:href="@{/register}" th:text="'Registrate'"></a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
-
-
-    <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
-
-    <section id="carousel-section">
+    </nav>
+    <section id="carousel-section" class="mt-5">
         <div id="recipeCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active" th:each="receta, iterStat : ${recetas}"
                     th:classappend="${iterStat.index == 0} ? 'active' : ''">
-                    <img th:src="@{/img/{imagenUrl}(imagenUrl=${receta.imagenUrl})}" class="d-block w-100"
+                    <img th:src="@{/img/{imagenUrl}(imagenUrl=${receta.imagenUrl})}" class="d-block w-100 carousel-img"
                         th:alt="${receta.titulo}" />
-                    <div class="carousel-caption d-none d-md-block">
+                    <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded">
                         <h5 th:text="${receta.titulo}"></h5>
                     </div>
                 </div>
@@ -67,10 +63,10 @@
     </section>
 
     <section id="recipes-section" class="container mt-5 mb-3">
-        <h2 class="text-center">Recetas Populares</h2>
+        <h2 class="text-center mb-4">Recetas Populares</h2>
         <div class="row">
             <div th:each="receta : ${recetas}" class="col-md-4 d-flex align-items-stretch mb-4">
-                <div class="card d-flex flex-column">
+                <div class="card shadow-lg border-0 rounded-lg d-flex flex-column">
                     <img th:src="@{/img/card/{imagenUrl}(imagenUrl=${receta.imagenUrl})}" class="card-img-top img-fluid"
                         style="height: 250px; object-fit: cover" th:alt="${receta.titulo}" />
                     <div class="card-body d-flex flex-column" style="flex-grow: 1;">
@@ -82,9 +78,9 @@
                         <p class="card-text mt-auto" th:text="'Tiempo de preparación: ' + ${receta.tiempoPreparacion}"></p>
                         <div class="mt-auto">
                             <a th:if="${#authorization.expression('isAuthenticated()')}"
-                                th:href="@{/recetas/{id}(id=${receta.id})}" class="btn btn-secondary">Ver Detalle</a>
+                                th:href="@{/recetas/{id}(id=${receta.id})}" class="btn btn-primary">Ver Detalle</a>
                             <a th:if="${not #authorization.expression('isAuthenticated()')}" th:href="@{/login}"
-                                class="btn btn-secondary">Más Detalle, Inicia sesión</a>
+                                class="btn btn-primary">Más Detalle, Inicia sesión</a>
                         </div>
                     </div>
                 </div>
@@ -140,7 +136,8 @@
         </div>
     </footer>
     <!-- Scripts de Bootstrap -->
-    <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}" ></script>
+    <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/fontawesome/js/all.min.js}"></script>
 
     <!-- Script para redirigir al detalle de la receta si el usuario está autenticado -->
 

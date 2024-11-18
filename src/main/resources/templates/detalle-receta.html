@@ -7,10 +7,12 @@
     <title th:text="'Detalle - ' + ${receta.titulo}">Detalle - Receta</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/fontawesome/css/all.min.css}">
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand text-white" href="/home">Recetas Populares</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -18,7 +20,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-5">
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link active text-white" href="/home">Home</a>
                     </li>
@@ -26,6 +28,7 @@
                         <a class="nav-link text-white" th:href="@{/logout}" th:text="'Logout'"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();"></a>
                     </li>
+                    <form id="logout-form" th:action="@{/logout}"  style="display: none;"></form>
                     <li class="nav-item" th:if="${!#authorization.expression('isAuthenticated()')}">
                         <a class="nav-link text-white" th:href="@{/login}" th:text="'Login'"></a>
                     </li>
@@ -33,30 +36,27 @@
                         <a class="nav-link text-white" th:href="@{/register}" th:text="'Registrate'"></a>
                     </li>
                 </ul>
-                
             </div>
         </div>
     </nav>
-
-    <form id="logout-form" th:action="@{/logout}" method="post" style="display: none;"></form>
 
     <!-- Sección principal -->
     <section class="container mt-5">
         <h2 class="text-center mb-5" th:text="${receta.titulo}"></h2>
         <div class="row">
             <div class="col-md-6">
-                <img th:src="@{/img/card/{imagenUrl}(imagenUrl=${receta.imagenUrl})}" class="img-fluid"
-                    th:alt="${receta.titulo}" style="border-radius: 2%;">
+                <img th:src="@{/img/card/{imagenUrl}(imagenUrl=${receta.imagenUrl})}" class="img-fluid rounded"
+                    th:alt="${receta.titulo}">
             </div>
             <div class="col-md-6">
                 <h4>Descripción</h4>
-                <hr style="border: 1px solid #dd5a5a; margin: 10px 0; width: 20%;">
+                <hr class="border-primary" style="width: 20%;">
                 <p th:text="${receta.descripcion}"></p>
                 <h4>Tiempo de Preparación</h4>
-                <hr style="border: 1px solid #dd5a5a; margin: 10px 0; width: 40%;">
+                <hr class="border-primary" style="width: 40%;">
                 <p th:text="${receta.tiempoPreparacion}"></p>
                 <h4>Pasos para preparar</h4>
-                <hr style="border: 1px solid #dd5a5a; margin: 10px 0; width: 35%;">
+                <hr class="border-primary" style="width: 35%;">
                 <p th:text="${receta.pasos}"></p>
             </div>
         </div>
@@ -103,7 +103,8 @@
         </div>
     </footer>
 
-   <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}" ></script>
+   <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+   <script th:src="@{/fontawesome/js/all.min.js}"></script>
 </body>
 
 </html>

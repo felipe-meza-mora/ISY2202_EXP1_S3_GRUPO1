@@ -10,117 +10,44 @@
 </head>
 
 <body>
-    <!-- Sección de navegación -->
-    <section id="nav-section">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand text-white" href="/home">Recetas Populares</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-5">
-                        <li class="nav-item">
-                            <a class="nav-link active text-white" href="/home">Home</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </section>
-
     <!-- Sección de login -->
-    <section id="login-section" class="container-fluid mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header text-center">
-                        <h3>Iniciar Sesión</h3>
-                    </div>
-                    <div class="card-body">
-                        <!-- Formulario de login -->
-                        <form th:action="@{/api/auth/login}" method="post" novalidate>
-                            <div class="mb-3">
-                                <label for="username" class="form-label d-flex justify-content-center">Nombre de Usuario</label>
-                                <input type="text" class="form-control" id="username" name="username" required />
-                                <div class="invalid-feedback">
-                                    Por favor, introduce un nombre de usuario válido.
-                                </div>
+    <section id="login-section" class="container-fluid d-flex align-items-center justify-content-center vh-100">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header text-center bg-primary text-white">
+                    <h3>Iniciar Sesión</h3>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Formulario de login -->
+                    <form th:action="@{/api/auth/login}" method="post" novalidate>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nombre de Usuario</label>
+                            <input type="text" class="form-control" id="username" name="username" required />
+                            <div class="invalid-feedback">
+                                Por favor, introduce un nombre de usuario válido.
                             </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label d-flex justify-content-center">Contraseña</label>
-                                <input type="password" class="form-control" id="password" name="password" required />
-                                <div class="invalid-feedback">
-                                    Por favor, introduce una contraseña válida.
-                                </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="password" name="password" required />
+                            <div class="invalid-feedback">
+                                Por favor, introduce una contraseña válida.
                             </div>
-                            <!-- Mensaje de error -->
-                            <div th:if="${param.error}" class="alert alert-danger">
-                                Usuario o contraseña incorrectos.
-                            </div>
-                            <button type="submit" class="btn btn-secondary w-100 mb-3">
-                                Iniciar Sesión
-                            </button>
-                            <!-- Enlace a la página de registro -->
-                            <div class="text-center">
-                                <p>¿No tienes cuenta? <a href="/register" class="text-primary">Regístrate aquí</a></p>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                        <!-- Mensaje de error -->
+                        <div th:if="${param.error}" class="alert alert-danger">
+                            Usuario o contraseña incorrectos.
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 mb-3">Iniciar Sesión</button>
+                        <!-- Enlace a la página de registro -->
+                        <div class="text-center">
+                            <p>¿No tienes cuenta? <a href="/register" class="text-primary">Regístrate aquí</a></p>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </section>
-    
-    <!-- Sección de pie de página -->
-    <section id="footer-section">
-        <footer class="bg-dark text-white pt-4">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-4">
-                        <h5>Sobre Nosotros</h5>
-                        <p>
-                            En nuestra página, compartimos las mejores recetas para que
-                            disfrutes cocinando en casa.
-                        </p>
-                    </div>
-                    <div class="col-md-4">
-                        <h5>Enlaces Útiles</h5>
-                        <ul class="list-unstyled">
-                            <li><a href="#" class="text-white">Inicio</a></li>
-                            <li><a href="#" class="text-white">Recetas Populares</a></li>
-                            <li><a href="#" class="text-white">Contáctanos</a></li>
-                            <li><a href="#" class="text-white">Política de Privacidad</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-md-4">
-                        <h5>Síguenos</h5>
-                        <ul class="list-unstyled d-flex">
-                            <li class="ms-3">
-                                <a href="#" class="text-white"><i class="fab fa-facebook fa-2x"></i></a>
-                            </li>
-                            <li class="ms-3">
-                                <a href="#" class="text-white"><i class="fab fa-instagram fa-2x"></i></a>
-                            </li>
-                            <li class="ms-3">
-                                <a href="#" class="text-white"><i class="fab fa-twitter fa-2x"></i></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="row mt-3">
-                    <div class="col text-center">
-                        <p class="mb-0">
-                            &copy; 2024 Recetas Populares. Todos los derechos reservados.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </section>
-
-    <!-- Bootstrap JS -->
     <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
 </body>
 

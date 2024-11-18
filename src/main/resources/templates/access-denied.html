@@ -3,13 +3,20 @@
 <head>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/fontawesome/css/all.min.css}">
     <title>Acceso Denegado</title>
 </head>
 <body>
-    <h1>Acceso Denegado</h1>
-    <p>No tienes permiso para acceder a esta página.</p>
-    <a href="/home">Volver a la página principal</a>
-
-    <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}" ></script>
+    <div class="container mt-5">
+        <div class="card shadow-lg border-0 rounded-lg">
+            <div class="card-body text-center">
+                <h1>Acceso Denegado</h1>
+                <p>No tienes permiso para acceder a esta página.</p>
+                <a href="/home" class="btn btn-primary">Volver a la página principal</a>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/fontawesome/js/all.min.js}"></script>
 </body>
 </html>
