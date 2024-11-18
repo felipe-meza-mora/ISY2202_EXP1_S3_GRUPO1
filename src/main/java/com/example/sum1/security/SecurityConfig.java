@@ -38,8 +38,6 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Rutas públicas (accesibles sin autenticación)
                 .requestMatchers("/", "/home", "/login", "/logout","/register", "/css/**", "/js/**", "/img/**", "/bootstrap/**").permitAll()
-                // Rutas de autenticación y registro de usuarios
-                .requestMatchers("/api/auth/login", "/api/auth/check", "/api/usuarios/register").permitAll() // Agregado aquí
                 // Rutas específicas para usuarios y administradores
                 .requestMatchers(HttpMethod.GET, "/api/usuarios/{username}").hasAnyRole("USER", "ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/usuarios/{id}").hasAnyRole("USER", "ADMIN")

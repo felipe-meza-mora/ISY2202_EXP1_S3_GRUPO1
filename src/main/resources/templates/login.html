@@ -19,24 +19,22 @@
                 </div>
                 <div class="card-body p-4">
                     <!-- Formulario de login -->
-                    <form th:action="@{/api/auth/login}" method="post" novalidate>
+                    <form th:action="@{/login}" method="post" novalidate>
                         <div class="mb-3">
                             <label for="username" class="form-label">Nombre de Usuario</label>
-                            <input type="text" class="form-control" id="username" name="username" required />
-                            <div class="invalid-feedback">
-                                Por favor, introduce un nombre de usuario válido.
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   th:classappend="${errorUsername} ? 'is-invalid' : ''" required />
+                            <div class="invalid-feedback" th:if="${errorUsername}">
+                                <span th:text="${errorUsername}"></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="password" name="password" required />
-                            <div class="invalid-feedback">
-                                Por favor, introduce una contraseña válida.
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   th:classappend="${errorPassword} ? 'is-invalid' : ''" required />
+                            <div class="invalid-feedback" th:if="${errorPassword}">
+                                <span th:text="${errorPassword}"></span>
                             </div>
-                        </div>
-                        <!-- Mensaje de error -->
-                        <div th:if="${param.error}" class="alert alert-danger">
-                            Usuario o contraseña incorrectos.
                         </div>
                         <button type="submit" class="btn btn-primary w-100 mb-3">Iniciar Sesión</button>
                         <!-- Enlace a la página de registro -->

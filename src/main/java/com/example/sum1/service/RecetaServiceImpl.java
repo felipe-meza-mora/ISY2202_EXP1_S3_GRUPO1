@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.sum1.model.Comentario;
+import com.example.sum1.model.Valoracion;
+
 @Service
 public class RecetaServiceImpl implements RecetaService {
 
@@ -49,6 +52,8 @@ public class RecetaServiceImpl implements RecetaService {
         receta.setImagenUrl(recetaDetails.getImagenUrl());
         receta.setTiempoPreparacion(recetaDetails.getTiempoPreparacion());
         receta.setPasos(recetaDetails.getPasos());
+        receta.setComentarios(recetaDetails.getComentarios());
+        receta.setValoraciones(recetaDetails.getValoraciones());
         return recetaRepository.save(receta);
     }
     

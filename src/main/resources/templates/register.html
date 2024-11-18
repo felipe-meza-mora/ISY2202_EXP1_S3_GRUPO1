@@ -18,40 +18,40 @@
                     <h3>Registrarse</h3>
                 </div>
                 <div class="card-body p-4">
-                    <form id="registerForm" th:action="@{/api/usuarios/register}" method="post" novalidate>
+                    <form id="registerForm" th:action="@{/register}" method="post" novalidate>
                         <div class="mb-3">
                             <label for="username" class="form-label">Nombre de Usuario</label>
-                            <input type="text" class="form-control" id="username" name="username" required />
-                            <div class="invalid-feedback">
-                                Por favor, introduce un nombre de usuario válido.
+                            <input type="text" class="form-control" id="username" name="username" required th:classappend="${errorUsername} ? 'is-invalid' : ''" />
+                            <div class="invalid-feedback" th:if="${errorUsername}">
+                                <span th:text="${errorUsername}"></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="email" name="email" required />
-                            <div class="invalid-feedback">
-                                Por favor, introduce un correo electrónico válido.
+                            <input type="email" class="form-control" id="email" name="email" required th:classappend="${errorEmail} ? 'is-invalid' : ''" />
+                            <div class="invalid-feedback" th:if="${errorEmail}">
+                                <span th:text="${errorEmail}"></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="nombre" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" required />
-                            <div class="invalid-feedback">
-                                Por favor, introduce tu nombre.
+                            <input type="text" class="form-control" id="nombre" name="nombre" required th:classappend="${errorNombre} ? 'is-invalid' : ''" />
+                            <div class="invalid-feedback" th:if="${errorNombre}">
+                                <span th:text="${errorNombre}"></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="apellido" class="form-label">Apellido</label>
-                            <input type="text" class="form-control" id="apellido" name="apellido" required />
-                            <div class="invalid-feedback">
-                                Por favor, introduce tu apellido.
+                            <input type="text" class="form-control" id="apellido" name="apellido" required th:classappend="${errorApellido} ? 'is-invalid' : ''" />
+                            <div class="invalid-feedback" th:if="${errorApellido}">
+                                <span th:text="${errorApellido}"></span>
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="password" name="password" required minlength="8" />
-                            <div class="invalid-feedback">
-                                La contraseña debe tener al menos 8 caracteres.
+                            <input type="password" class="form-control" id="password" name="password" required minlength="8" th:classappend="${errorPassword} ? 'is-invalid' : ''" />
+                            <div class="invalid-feedback" th:if="${errorPassword}">
+                                <span th:text="${errorPassword}"></span>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary w-100 mb-3">Registrarse</button>

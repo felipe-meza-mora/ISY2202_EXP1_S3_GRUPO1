@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +19,8 @@ import java.util.Optional;
 @Validated
 @Service
 public class UsuarioService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -48,7 +52,9 @@ public class UsuarioService {
 
     public Usuario registrarUsuario(@Valid Usuario usuario) {
         validarUsuario(usuario);
+        logger.info("Contraseña antes de encriptar: {}", usuario.getPassword());
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+        logger.info("Contraseña después de encriptar: {}", usuario.getPassword());
         return usuarioRepository.save(usuario);
     }
 

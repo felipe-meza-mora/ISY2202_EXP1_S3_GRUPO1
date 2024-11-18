@@ -72,6 +72,15 @@ body {
   transform: translateY(-10px);
 }
 
+.text-danger {
+  color: #dc3545; /* Rojo estándar para errores */
+  font-size: 0.9rem; /* Tamaño de fuente más pequeño */
+}
+.mt-1 {
+  margin-top: 0.25rem; /* Separación mínima desde el campo */
+}
+
+
 /* Media queries para dispositivos móviles */
 @media only screen and (max-width: 767px) {
   #recipes-section .card,

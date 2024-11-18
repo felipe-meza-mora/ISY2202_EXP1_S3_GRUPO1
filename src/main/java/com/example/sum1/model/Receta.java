@@ -1,6 +1,7 @@
 package com.example.sum1.model;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "recetas")
@@ -25,6 +26,12 @@ public class Receta {
 
     @Column(name = "pasos", length = 4000)
     private String pasos;
+
+    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comentario> comentarios;
+
+    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Valoracion> valoraciones;
 
     public Receta() {}
 
@@ -83,5 +90,21 @@ public class Receta {
 
     public void setPasos(String pasos) {
         this.pasos = pasos;
+    }
+
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void setComentarios(List<Comentario> comentarios) {
+        this.comentarios = comentarios;
+    }
+
+    public List<Valoracion> getValoraciones() {
+        return valoraciones;
+    }
+
+    public void setValoraciones(List<Valoracion> valoraciones) {
+        this.valoraciones = valoraciones;
     }
 }
