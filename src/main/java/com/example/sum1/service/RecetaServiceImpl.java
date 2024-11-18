@@ -8,9 +8,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.sum1.model.Comentario;
-import com.example.sum1.model.Valoracion;
-
 @Service
 public class RecetaServiceImpl implements RecetaService {
 
