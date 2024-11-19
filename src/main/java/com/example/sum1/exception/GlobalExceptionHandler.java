@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
         logger.error("Excepción de validación capturada: {}", ex.getMessage());
 
         Map<String, String> errores = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        ex.getBindingResult().getAllErrors().forEach(error -> {
             String campo = ((FieldError) error).getField();
             String mensaje = error.getDefaultMessage();
             errores.put(campo, mensaje);

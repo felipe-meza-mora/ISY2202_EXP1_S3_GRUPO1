@@ -1,8 +1,8 @@
 package com.example.sum1.service;
 
+import com.example.sum1.exception.RecetaNotFoundException;
 import com.example.sum1.model.Receta;
 import com.example.sum1.repository.RecetaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,16 +11,17 @@ import java.util.Optional;
 @Service
 public class RecetaServiceImpl implements RecetaService {
 
-    @Autowired
-    private RecetaRepository recetaRepository;
-    
+    private final RecetaRepository recetaRepository;
+
+
+    public RecetaServiceImpl(RecetaRepository recetaRepository) {
+        this.recetaRepository = recetaRepository;
+    }
+
     // Obtener todas las recetas
     @Override
     public List<Receta> getAllRecetas() {
-        List<Receta> recetas = recetaRepository.findAll();
-        System.out.println("Cantidad de recetas obtenidas: " + recetas.size());
-        recetas.forEach(r -> System.out.println("Receta: " + r.getTitulo()));
-        return recetas;
+        return recetaRepository.findAll();
     }
     
     // Crear una nueva receta
@@ -36,7 +37,7 @@ public class RecetaServiceImpl implements RecetaService {
         if (receta.isPresent()) {
             return receta.get();
         } else {
-            throw new RuntimeException("Receta no encontrada con el ID: " + id);
+            throw new RecetaNotFoundException("Receta no encontrada con el ID: " + id);
         }
     }
     

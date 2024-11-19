@@ -1,9 +1,6 @@
 package com.example.sum1.security;
 
 import com.example.sum1.service.CustomUserDetailsService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,42 +19,28 @@ import java.io.IOException;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtRequestFilter.class);
+    private final CustomUserDetailsService userDetailsService;
+    private final JwtUtil jwtUtil;
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    public JwtRequestFilter(CustomUserDetailsService userDetailsService, JwtUtil jwtUtil) {
+        this.userDetailsService = userDetailsService;
+        this.jwtUtil = jwtUtil;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        // Obtener el token desde la cookie
-        String jwt = null;
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if ("jwt".equals(cookie.getName())) { // Asegúrate de que el nombre de la cookie es "jwt"
-                    jwt = cookie.getValue();
-                    break;
-                }
-            }
-        }
-
-        logger.info("Token JWT desde cookie: {}", jwt);
-
+        String jwt = extractJwtFromCookies(request);
         String username = null;
 
         if (jwt != null) {
             try {
                 username = jwtUtil.extractUsername(jwt);
-                logger.info("Username: {}", username);
             } catch (ExpiredJwtException e) {
-                logger.warn("Token expirado", e);
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expirado.");
                 return;
             } catch (Exception e) {
-                logger.error("Error al extraer el username del token", e);
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error en el token.");
                 return;
             }
@@ -67,21 +50,31 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
             if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                logger.info("Usuario autenticado: {}", username);
+                setAuthentication(request, userDetails);
             } else {
-                logger.warn("Token no válido para el usuario: {}", username);
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token no válido.");
                 return;
             }
-        } else {
-            logger.warn("No se encontró el username en el token o ya hay autenticación.");
         }
 
         chain.doFilter(request, response);
+    }
+
+    private String extractJwtFromCookies(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("jwt".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    private void setAuthentication(HttpServletRequest request, UserDetails userDetails) {
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

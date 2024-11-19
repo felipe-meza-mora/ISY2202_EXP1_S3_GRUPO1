@@ -1,7 +1,6 @@
 package com.example.sum1.config;
 
 import com.example.sum1.service.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -15,8 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class ApplicationConfig {
 
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService; // Inyectar el CustomUserDetailsService
+    
 
     @Bean
     public AuthenticationManager customAuthenticationManager(AuthenticationConfiguration config) throws Exception { // Renombrar aquí
@@ -24,12 +22,13 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public AuthenticationProvider authenticationProvider(CustomUserDetailsService customUserDetailsService) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(customUserDetailsService); // Usar el CustomUserDetailsService
         authenticationProvider.setPasswordEncoder(applicationPasswordEncoder());
         return authenticationProvider;
     }
+
     @Bean
     @Primary // Marcar este bean como el principal
     public PasswordEncoder applicationPasswordEncoder() {

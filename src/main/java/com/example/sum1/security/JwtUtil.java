@@ -18,10 +18,10 @@ import java.util.function.Function;
 public class JwtUtil {
 
     @Value("${myapp.secret-key}")
-    private String SECRET_KEY;
+    private String secretKey;
     
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     public String extractUsername(String token) {
@@ -69,7 +69,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Boolean validateToken(String token, String username) {
+    public boolean validateToken(String token, String username) {
         final String extractedUsername = extractUsername(token);
         return (extractedUsername.equals(username) && !isTokenExpired(token));
     }

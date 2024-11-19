@@ -1,9 +1,6 @@
 package com.example.sum1.security;
 
 import com.example.sum1.service.CustomUserDetailsService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,33 +20,36 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+    private static final String ROLE_ADMIN = "ADMIN"; // Definir constante
+    private static final String ROLE_USER = "USER"; // Definir constante
 
-    @Autowired
-    private JwtRequestFilter jwtRequestFilter;
+    private final JwtRequestFilter jwtRequestFilter;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+
+    public SecurityConfig(JwtRequestFilter jwtRequestFilter, CustomUserDetailsService customUserDetailsService) {
+        this.jwtRequestFilter = jwtRequestFilter;
+        this.customUserDetailsService = customUserDetailsService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        logger.info("Configurando SecurityFilterChain");
         http
             .authorizeHttpRequests(auth -> auth
                 // Rutas públicas (accesibles sin autenticación)
                 .requestMatchers("/", "/home", "/login", "/logout","/register", "/css/**", "/js/**", "/img/**", "/bootstrap/**").permitAll()
                 // Rutas específicas para usuarios y administradores
-                .requestMatchers(HttpMethod.GET, "/api/usuarios/{username}").hasAnyRole("USER", "ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/usuarios/{id}").hasAnyRole("USER", "ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/usuarios/{id}").hasAnyRole("USER", "ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/usuarios").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/usuarios/{username}").hasAnyRole(ROLE_USER, ROLE_ADMIN)
+                .requestMatchers(HttpMethod.PUT, "/api/usuarios/{id}").hasAnyRole(ROLE_USER, ROLE_ADMIN)
+                .requestMatchers(HttpMethod.DELETE, "/api/usuarios/{id}").hasAnyRole(ROLE_USER, ROLE_ADMIN)
+                .requestMatchers(HttpMethod.GET, "/api/usuarios").hasRole(ROLE_ADMIN)
                 // Rutas para recetas
                 .requestMatchers(HttpMethod.GET, "/api/recetas/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/recetas").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/recetas/{id}").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/recetas/{id}").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/recetas").hasRole(ROLE_ADMIN)
+                .requestMatchers(HttpMethod.PUT, "/api/recetas/{id}").hasRole(ROLE_ADMIN)
+                .requestMatchers(HttpMethod.DELETE, "/api/recetas/{id}").hasRole(ROLE_ADMIN)
                 // Rutas para vistas de recetas, requieren autenticación
-                .requestMatchers("/recetas/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/recetas/**").hasAnyRole(ROLE_USER, ROLE_ADMIN)
                 // Cualquier otra solicitud necesita autenticación
                 .anyRequest().authenticated()
             )
@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .exceptionHandling(exceptionHandling ->
-                exceptionHandling.accessDeniedPage("/access-denied") // Redirigir a la página de acceso denegado
+                exceptionHandling.accessDeniedPage("/access-denied")
             )
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

@@ -4,14 +4,11 @@ import com.example.sum1.exception.ResourceNotFoundException;
 import com.example.sum1.model.Role;
 import com.example.sum1.model.Usuario;
 import com.example.sum1.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,14 +17,14 @@ import java.util.Optional;
 @Service
 public class UsuarioService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
 
-    @Autowired
-    @Qualifier("applicationPasswordEncoder") // Asegúrate de que el nombre coincida
-    private PasswordEncoder passwordEncoder;
+    public UsuarioService(UsuarioRepository usuarioRepository, @Qualifier("applicationPasswordEncoder") PasswordEncoder passwordEncoder) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     private void validarUsuario(Usuario usuario) {
         if (usuario.getNombre() == null || usuario.getNombre().isEmpty()) {
@@ -52,9 +49,7 @@ public class UsuarioService {
 
     public Usuario registrarUsuario(@Valid Usuario usuario) {
         validarUsuario(usuario);
-        logger.info("Contraseña antes de encriptar: {}", usuario.getPassword());
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        logger.info("Contraseña después de encriptar: {}", usuario.getPassword());
         return usuarioRepository.save(usuario);
     }
 

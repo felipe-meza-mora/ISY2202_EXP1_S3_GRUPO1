@@ -5,8 +5,6 @@ import com.example.sum1.security.JwtUtil;
 import com.example.sum1.service.UsuarioService;
 
 import jakarta.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,9 +20,6 @@ import com.example.sum1.service.RecetaService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -32,31 +27,38 @@ import java.util.Optional;
 @Controller
 public class HomeController {
 
-    private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+    private static final String REDIRECT_HOME = "redirect:/home"; // Definir constante
+    private static final String ERROR_MESSAGE = "error"; // Definir constante
+    private static final String REGISTER_PAGE = "register"; // Definir constante
+    private static final String USERNAME_IN_USE_ERROR = "El nombre de usuario ya está en uso."; // Definir constante
+    private static final String EMAIL_IN_USE_ERROR = "El correo electrónico ya está en uso."; // Definir constante
+    private static final String RECETA_NO_ENCONTRADA = "Receta no encontrada. Intenta con otro ID."; // Definir constante
+    private static final String USERNAME_REQUIRED_ERROR = "El nombre de usuario es obligatorio."; // Nueva constante
+    private static final String ERROR_USERNAME = "errorUsername"; // Nueva constante
 
-    @Autowired
-    private RecetaService recetaService;
+    private final RecetaService recetaService;
+    private final UsuarioService usuarioService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    @Autowired
-    private UsuarioService usuarioService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtil jwtUtil;
+    public HomeController(RecetaService recetaService, UsuarioService usuarioService, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+        this.recetaService = recetaService;
+        this.usuarioService = usuarioService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+    }
 
     // Redirigir a la página de inicio
     @GetMapping("/")
     public String redirectToHome() {
-        return "redirect:/home";
+        return REDIRECT_HOME; // Usar constante
     }
 
     // Mostrar la página principal con todas las recetas
     @GetMapping("/home")
     public String home(Model model, @AuthenticationPrincipal Principal principal) {
         List<Receta> recetas = recetaService.getAllRecetas();
-        logger.info("Recetas obtenidas: {}", recetas);
         
         model.addAttribute("recetas", recetas);
         model.addAttribute("isAuthenticated", principal != null); // Verificar si el usuario está autenticado
@@ -69,7 +71,6 @@ public class HomeController {
         return "login";  // Cargar la plantilla Thymeleaf "login.html"
     }
 
-
     @PostMapping("/login")
     public ModelAndView loginPost(@RequestParam("username") String username, 
                                   @RequestParam("password") String password, 
@@ -78,14 +79,11 @@ public class HomeController {
         Optional<Usuario> optionalUsuario = usuarioService.buscarPorUsername(username);
     
         if (optionalUsuario.isEmpty()) {
-            modelAndView.addObject("errorUsername", "Usuario no encontrado");
+            modelAndView.addObject(ERROR_USERNAME, "Usuario no encontrado"); // Usar constante
             return modelAndView;
         }
     
         Usuario usuarioDB = optionalUsuario.get();
-    
-        logger.info("Contraseña ingresada: {}", password);
-        logger.info("Contraseña en la base de datos: {}", usuarioDB.getPassword());
     
         if (!passwordEncoder.matches(password, usuarioDB.getPassword())) {
             modelAndView.addObject("errorPassword", "Contraseña incorrecta");
@@ -106,7 +104,7 @@ public class HomeController {
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     
         // Redirigir al usuario a la página principal
-        modelAndView.setViewName("redirect:/home");
+        modelAndView.setViewName(REDIRECT_HOME); // Usar constante
         return modelAndView;
     }
     
@@ -114,7 +112,7 @@ public class HomeController {
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         model.addAttribute("usuario", new Usuario());
-        return "register"; // Cargar la plantilla Thymeleaf "register.html"
+        return REGISTER_PAGE; // Usar constante
     }
 
     // Manejar el registro de usuario
@@ -127,43 +125,40 @@ public class HomeController {
             @RequestParam("password") String password,
             Model model) {
 
-        logger.info("Registrando usuario con username: {}", username);
-        logger.info("Contraseña recibida: {}", password);
-
         // Validar si el usuario o el correo ya existen
         if (username == null || username.isEmpty()) {
-            model.addAttribute("errorUsername", "El nombre de usuario es obligatorio.");
-            return "register";
+            model.addAttribute(ERROR_USERNAME, USERNAME_REQUIRED_ERROR); // Usar constante
+            return REGISTER_PAGE; // Usar constante
         }
 
         if (email == null || email.isEmpty()) {
             model.addAttribute("errorEmail", "El correo electrónico es obligatorio.");
-            return "register";
+            return REGISTER_PAGE; // Usar constante
         }
 
         if (nombre == null || nombre.isEmpty()) {
             model.addAttribute("errorNombre", "El nombre es obligatorio.");
-            return "register";
+            return REGISTER_PAGE; // Usar constante
         }
 
         if (apellido == null || apellido.isEmpty()) {
             model.addAttribute("errorApellido", "El apellido es obligatorio.");
-            return "register";
+            return REGISTER_PAGE; // Usar constante
         }
 
         if (password == null || password.isEmpty()) {
             model.addAttribute("errorPassword", "La contraseña es obligatoria.");
-            return "register";
+            return REGISTER_PAGE; // Usar constante
         }
 
-        if (usuarioService.existePorUsername(username)) {
-            model.addAttribute("errorUsername", "El nombre de usuario ya está en uso.");
-            return "register";
+        if (Boolean.TRUE.equals(usuarioService.existePorUsername(username))) { // Usar expresión booleana primitiva
+            model.addAttribute(ERROR_USERNAME, USERNAME_IN_USE_ERROR); // Usar constante
+            return REGISTER_PAGE; // Usar constante
         }
 
-        if (usuarioService.existePorEmail(email)) {
-            model.addAttribute("errorEmail", "El correo electrónico ya está en uso.");
-            return "register";
+        if (Boolean.TRUE.equals(usuarioService.existePorEmail(email))) { // Usar expresión booleana primitiva
+            model.addAttribute("errorEmail", EMAIL_IN_USE_ERROR); // Usar constante
+            return REGISTER_PAGE; // Usar constante
         }
 
         // Crear y registrar al nuevo usuario
@@ -174,8 +169,6 @@ public class HomeController {
         nuevoUsuario.setApellido(apellido);
         nuevoUsuario.setPassword(password); // No encriptar aquí
         nuevoUsuario.setRol(Role.ROLE_USER); // Establecer el rol predeterminado a ROLE_USER
-
-        logger.info("Contraseña antes de registrar: {}", nuevoUsuario.getPassword());
 
         usuarioService.registrarUsuario(nuevoUsuario);
 
@@ -191,12 +184,9 @@ public class HomeController {
             model.addAttribute("receta", receta);
             return "detalle-receta";  // Cargar la plantilla "detalle-receta.html"
         } catch (RuntimeException e) {
-            // Registrar el error en el log sin exponer detalles al usuario
-            logger.error("Error al obtener la receta con ID: " + id, e);
-
             // Mensaje genérico para el usuario
-            model.addAttribute("errorMessage", "Receta no encontrada. Intenta con otro ID.");
-            return "error";  // Cargar una plantilla de error genérica
+            model.addAttribute(ERROR_MESSAGE, RECETA_NO_ENCONTRADA); // Usar constante
+            return ERROR_MESSAGE;  // Cargar una plantilla de error genérica
         }
     }
 
@@ -234,9 +224,8 @@ public class HomeController {
         jsessionCookie.setHttpOnly(true); 
         response.addCookie(jsessionCookie);
 
-
         // Redirigir a la página de inicio después de hacer logout
-        return "redirect:/home";
+        return REDIRECT_HOME; // Usar constante
     }
 
 }

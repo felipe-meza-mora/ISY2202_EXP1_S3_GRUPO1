@@ -8,6 +8,7 @@ class Sum1ApplicationTests {
 
 	@Test
 	void contextLoads() {
+		// Este método está vacío porque aún no se ha implementado.
 	}
 
 }
