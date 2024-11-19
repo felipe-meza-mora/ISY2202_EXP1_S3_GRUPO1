@@ -55,7 +55,7 @@ public class RecetaServiceImpl implements RecetaService {
         return recetaRepository.save(receta);
     }
     
-    // Obtener todos los productos
+    // eliminar receta
     @Override
     public void deleteReceta(Long id) {
         Receta receta = getRecetaById(id);
