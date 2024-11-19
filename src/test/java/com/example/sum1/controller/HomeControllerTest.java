@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
 
 
 
-public class HomeControllerTest {
+class HomeControllerTest {
 
     @Mock
     private UsuarioService usuarioService;
@@ -25,48 +25,48 @@ public class HomeControllerTest {
     private Model model;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
         model = new BindingAwareModelMap();
     }
 
     @Test
-    public void testRegistrarUsuario_UsernameIsEmpty() {
+    void testRegistrarUsuario_UsernameIsEmpty() {
         String viewName = homeController.registrarUsuario("", "test@example.com", "Nombre", "Apellido", "password", model);
         assertEquals("register", viewName);
         assertEquals("El nombre de usuario es obligatorio.", model.getAttribute("errorUsername"));
     }
 
     @Test
-    public void testRegistrarUsuario_EmailIsEmpty() {
+    void testRegistrarUsuario_EmailIsEmpty() {
         String viewName = homeController.registrarUsuario("username", "", "Nombre", "Apellido", "password", model);
         assertEquals("register", viewName);
         assertEquals("El correo electrónico es obligatorio.", model.getAttribute("errorEmail"));
     }
 
     @Test
-    public void testRegistrarUsuario_NombreIsEmpty() {
+    void testRegistrarUsuario_NombreIsEmpty() {
         String viewName = homeController.registrarUsuario("username", "test@example.com", "", "Apellido", "password", model);
         assertEquals("register", viewName);
         assertEquals("El nombre es obligatorio.", model.getAttribute("errorNombre"));
     }
 
     @Test
-    public void testRegistrarUsuario_ApellidoIsEmpty() {
+    void testRegistrarUsuario_ApellidoIsEmpty() {
         String viewName = homeController.registrarUsuario("username", "test@example.com", "Nombre", "", "password", model);
         assertEquals("register", viewName);
         assertEquals("El apellido es obligatorio.", model.getAttribute("errorApellido"));
     }
 
     @Test
-    public void testRegistrarUsuario_PasswordIsEmpty() {
+    void testRegistrarUsuario_PasswordIsEmpty() {
         String viewName = homeController.registrarUsuario("username", "test@example.com", "Nombre", "Apellido", "", model);
         assertEquals("register", viewName);
         assertEquals("La contraseña es obligatoria.", model.getAttribute("errorPassword"));
     }
 
     @Test
-    public void testRegistrarUsuario_UsernameInUse() {
+    void testRegistrarUsuario_UsernameInUse() {
         when(usuarioService.existePorUsername("username")).thenReturn(true);
         String viewName = homeController.registrarUsuario("username", "test@example.com", "Nombre", "Apellido", "password", model);
         assertEquals("register", viewName);
@@ -74,7 +74,7 @@ public class HomeControllerTest {
     }
 
     @Test
-    public void testRegistrarUsuario_EmailInUse() {
+    void testRegistrarUsuario_EmailInUse() {
         when(usuarioService.existePorEmail("test@example.com")).thenReturn(true);
         String viewName = homeController.registrarUsuario("username", "test@example.com", "Nombre", "Apellido", "password", model);
         assertEquals("register", viewName);
@@ -82,7 +82,7 @@ public class HomeControllerTest {
     }
 
     @Test
-    public void testRegistrarUsuario_Success() {
+    void testRegistrarUsuario_Success() {
         when(usuarioService.existePorUsername("username")).thenReturn(false);
         when(usuarioService.existePorEmail("test@example.com")).thenReturn(false);
 

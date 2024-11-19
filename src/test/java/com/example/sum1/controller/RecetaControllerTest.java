@@ -10,17 +10,12 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-
-
-
-public class RecetaControllerTest {
+class RecetaControllerTest {
 
     @Mock
     private RecetaService recetaService;
@@ -28,17 +23,13 @@ public class RecetaControllerTest {
     @InjectMocks
     private RecetaController recetaController;
 
-    private MockMvc mockMvc;
-
-
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(recetaController).build();
     }
 
     @Test
-    public void testGetAllRecetas() {
+    void testGetAllRecetas() {
         Receta receta1 = new Receta();
         Receta receta2 = new Receta();
         List<Receta> recetas = Arrays.asList(receta1, receta2);
@@ -53,7 +44,7 @@ public class RecetaControllerTest {
     }
 
     @Test
-    public void testGetRecetaById() {
+    void testGetRecetaById() {
         Receta receta = new Receta();
         receta.setId(1L);
 
@@ -67,7 +58,7 @@ public class RecetaControllerTest {
     }
 
     @Test
-    public void testGetRecetaByIdNotFound() {
+    void testGetRecetaByIdNotFound() {
         when(recetaService.getRecetaById(1L)).thenThrow(new RuntimeException());
 
         ResponseEntity<String> response = recetaController.getRecetaById(1L);
@@ -79,7 +70,7 @@ public class RecetaControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    public void testSaveReceta() {
+    void testSaveReceta() {
         Receta receta = new Receta();
         when(recetaService.saveReceta(receta)).thenReturn(receta);
 
@@ -92,7 +83,7 @@ public class RecetaControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    public void testUpdateReceta() {
+    void testUpdateReceta() {
         Receta receta = new Receta();
         receta.setId(1L);
 
@@ -107,7 +98,7 @@ public class RecetaControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    public void testUpdateRecetaNotFound() {
+    void testUpdateRecetaNotFound() {
         Receta receta = new Receta();
         receta.setId(1L);
 
@@ -122,7 +113,7 @@ public class RecetaControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    public void testDeleteReceta() {
+    void testDeleteReceta() {
         doNothing().when(recetaService).deleteReceta(1L);
 
         ResponseEntity<String> response = recetaController.deleteReceta(1L);
@@ -134,7 +125,7 @@ public class RecetaControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    public void testDeleteRecetaNotFound() {
+    void testDeleteRecetaNotFound() {
         doThrow(new RuntimeException()).when(recetaService).deleteReceta(1L);
 
         ResponseEntity<String> response = recetaController.deleteReceta(1L);

@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 
 
 
-public class UsuarioControllerTest {
+class UsuarioControllerTest {
 
     @Mock
     private UsuarioService usuarioService;
@@ -34,12 +34,12 @@ public class UsuarioControllerTest {
     private UsuarioController usuarioController;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testObtenerTodosLosUsuarios() {
+    void testObtenerTodosLosUsuarios() {
         List<Usuario> usuarios = List.of(new Usuario(), new Usuario());
         when(usuarioService.obtenerTodosLosUsuarios()).thenReturn(usuarios);
 
@@ -50,7 +50,7 @@ public class UsuarioControllerTest {
     }
 
     @Test
-    public void testBuscarUsuarioPorUsername_UsuarioNoEncontrado() {
+    void testBuscarUsuarioPorUsername_UsuarioNoEncontrado() {
         String username = "testUser";
         when(usuarioService.buscarPorUsername(username)).thenReturn(Optional.empty());
 
@@ -61,7 +61,7 @@ public class UsuarioControllerTest {
     }
 
     @Test
-    public void testBuscarUsuarioPorUsername_UsuarioEncontrado() {
+    void testBuscarUsuarioPorUsername_UsuarioEncontrado() {
         String username = "testUser";
         Usuario usuario = new Usuario();
         usuario.setUsername(username);
@@ -81,7 +81,7 @@ public class UsuarioControllerTest {
 
 
     @Test
-    public void testActualizarUsuario_UsuarioNoEncontrado() {
+    void testActualizarUsuario_UsuarioNoEncontrado() {
         Long id = 1L;
         Usuario usuarioActualizado = new Usuario();
         when(usuarioService.buscarPorUsername(anyString())).thenReturn(Optional.empty());
@@ -93,7 +93,7 @@ public class UsuarioControllerTest {
     }
 
     @Test
-    public void testEliminarUsuario_UsuarioNoEncontrado() {
+    void testEliminarUsuario_UsuarioNoEncontrado() {
         Long id = 1L;
         when(usuarioService.buscarPorUsername(anyString())).thenReturn(Optional.empty());
 

@@ -16,7 +16,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-public class RecetaServiceTest {
+class RecetaServiceTest {
 
     @Mock
     private RecetaRepository recetaRepository;
@@ -27,7 +27,7 @@ public class RecetaServiceTest {
     private Receta receta;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
         receta = new Receta();
         receta.setId(1L);
@@ -36,7 +36,7 @@ public class RecetaServiceTest {
     }
 
     @Test
-    public void testGetAllRecetas() {
+    void testGetAllRecetas() {
         List<Receta> recetas = Arrays.asList(receta);
         when(recetaRepository.findAll()).thenReturn(recetas);
 
@@ -47,7 +47,7 @@ public class RecetaServiceTest {
     }
 
     @Test
-    public void testSaveReceta() {
+    void testSaveReceta() {
         when(recetaRepository.save(any(Receta.class))).thenReturn(receta);
 
         Receta result = recetaServiceImpl.saveReceta(receta);
@@ -57,7 +57,7 @@ public class RecetaServiceTest {
     }
 
     @Test
-    public void testGetRecetaById() {
+    void testGetRecetaById() {
         when(recetaRepository.findById(anyLong())).thenReturn(java.util.Optional.of(receta));
 
         Receta result = recetaServiceImpl.getRecetaById(1L);
@@ -67,7 +67,7 @@ public class RecetaServiceTest {
     }
 
     @Test
-    public void testUpdateReceta() {
+    void testUpdateReceta() {
         when(recetaRepository.findById(anyLong())).thenReturn(java.util.Optional.of(receta));
         when(recetaRepository.save(any(Receta.class))).thenReturn(receta);
 
@@ -79,7 +79,7 @@ public class RecetaServiceTest {
     }
 
     @Test
-    public void testDeleteReceta() {
+    void testDeleteReceta() {
         when(recetaRepository.findById(anyLong())).thenReturn(java.util.Optional.of(receta));
         doNothing().when(recetaRepository).delete(any(Receta.class));
 
