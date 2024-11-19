@@ -214,9 +214,9 @@ public class HomeController {
             @CookieValue(value = "jwt", required = false) Cookie jwtCookie) {
         // Eliminar la cookie JWT si existe
         if (jwtCookie != null) {
-            jwtCookie.setMaxAge(0); // Establecer la edad máxima a 0 para eliminar la cookie
-            jwtCookie.setPath("/"); // Asegurarse de que se elimine en todo el contexto de la aplicación
-            response.addCookie(jwtCookie); // Agregar la cookie modificada a la respuesta
+            jwtCookie.setMaxAge(0); 
+            jwtCookie.setPath("/"); 
+            response.addCookie(jwtCookie); 
         }
 
         // Invalidar la sesión actual
@@ -226,9 +226,14 @@ public class HomeController {
 
         // Eliminar la cookie JSESSIONID en el cliente
         Cookie jsessionCookie = new Cookie("JSESSIONID", null);
-        jsessionCookie.setMaxAge(0); // Eliminar la cookie
-        jsessionCookie.setPath("/"); // Asegurarte de que se elimine para todo el contexto
+        jsessionCookie.setMaxAge(0); 
+        jsessionCookie.setPath("/"); 
+
+        // Establecer las banderas de seguridad
+        jsessionCookie.setSecure(true); 
+        jsessionCookie.setHttpOnly(true); 
         response.addCookie(jsessionCookie);
+
 
         // Redirigir a la página de inicio después de hacer logout
         return "redirect:/home";
