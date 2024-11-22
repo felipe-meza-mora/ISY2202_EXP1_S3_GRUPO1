@@ -15,6 +15,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+import com.example.sum1.model.Comentario;
+import com.example.sum1.model.Valoracion;
+
 class RecetaControllerTest {
 
     @Mock
@@ -133,5 +136,41 @@ class RecetaControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("Receta no encontrada con el ID: 1", response.getBody());
         verify(recetaService, times(1)).deleteReceta(1L);
+    }
+
+    @Test
+    void testSaveComentario() {
+        Comentario comentario = new Comentario();
+        Receta receta = new Receta();
+        receta.setId(1L);
+        comentario.setReceta(receta);
+
+        when(recetaService.getRecetaById(1L)).thenReturn(receta);
+        when(recetaService.saveReceta(receta)).thenReturn(receta);
+
+        ResponseEntity<Comentario> response = recetaController.saveComentario(comentario);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(comentario, response.getBody());
+        verify(recetaService, times(1)).getRecetaById(1L);
+        verify(recetaService, times(1)).saveReceta(receta);
+    }
+
+    @Test
+    void testSaveValoracion() {
+        Valoracion valoracion = new Valoracion();
+        Receta receta = new Receta();
+        receta.setId(1L);
+        valoracion.setReceta(receta);
+
+        when(recetaService.getRecetaById(1L)).thenReturn(receta);
+        when(recetaService.saveReceta(receta)).thenReturn(receta);
+
+        ResponseEntity<Valoracion> response = recetaController.saveValoracion(valoracion);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(valoracion, response.getBody());
+        verify(recetaService, times(1)).getRecetaById(1L);
+        verify(recetaService, times(1)).saveReceta(receta);
     }
 }

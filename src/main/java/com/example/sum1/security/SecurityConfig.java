@@ -50,6 +50,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/api/recetas/{id}").hasRole(ROLE_ADMIN)
                 // Rutas para vistas de recetas, requieren autenticación
                 .requestMatchers("/recetas/**").hasAnyRole(ROLE_USER, ROLE_ADMIN)
+                .requestMatchers("/admin-clientes").hasRole(ROLE_ADMIN)  // Restringir acceso a administradores
+                .requestMatchers("/editar/{id}").hasRole(ROLE_ADMIN)  // Restringir acceso a administradores
                 // Cualquier otra solicitud necesita autenticación
                 .anyRequest().authenticated()
             )

@@ -38,17 +38,21 @@ body {
 }
 
 .form-control {
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 .btn-primary {
   background-color: #007bff;
   border: none;
-  border-radius: 10px;
+  border-radius: 50px;
 }
 
 .btn-primary:hover {
   background-color: #0056b3;
+}
+
+.btn-outline-warning, .btn-outline-danger {
+  border-radius: 50px;
 }
 
 /* Estilos para el carousel */
@@ -80,12 +84,63 @@ body {
   margin-top: 0.25rem; /* Separación mínima desde el campo */
 }
 
+/* Estilos para la tabla de administración de clientes */
+.table {
+  margin-top: 20px;
+}
+
+.table thead {
+  background-color: #f8f9fa;
+  color: #343a40;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Estilos para el modal de edición */
+.modal-header {
+  background-color: #007bff;
+  color: white;
+}
+
+.modal-footer {
+  justify-content: center;
+}
+
+/* Estilos para el formulario de edición */
+.card {
+  border-radius: 10px;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* Estilos para el fondo */
+body.bg-light {
+  background-color: #f8f9fa;
+}
+
+/* Estilos para las tarjetas flotantes */
+.floating-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.floating-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
 
 /* Media queries para dispositivos móviles */
 @media only screen and (max-width: 767px) {
   #recipes-section .card,
   #login-section .card,
   #register-section .card {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .card {
     margin-left: auto;
     margin-right: auto;
   }
@@ -98,12 +153,20 @@ body {
     margin-left: auto;
     margin-right: auto;
   }
+  .card {
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 @media only screen and (max-width: 424px) {
   #recipes-section .card,
   #login-section .card,
   #register-section .card {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .card {
     margin-left: auto;
     margin-right: auto;
   }

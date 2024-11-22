@@ -23,6 +23,9 @@
                     <li class="nav-item">
                         <a class="nav-link active text-white" href="/home">Home</a>
                     </li>
+                    <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                        <a class="nav-link active text-white" href="/admin-clientes">Administrador</a>
+                    </li>
                     <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()')}">
                         <a class="nav-link text-white" th:href="@{/logout}" th:text="'Logout'"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();"></a>

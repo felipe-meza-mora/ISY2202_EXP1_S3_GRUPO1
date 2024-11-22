@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import com.example.sum1.model.Comentario;
 import com.example.sum1.model.Valoracion;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/recetas")
@@ -81,6 +82,9 @@ public class RecetaController {
     public ResponseEntity<Comentario> saveComentario(@Valid @RequestBody Comentario comentario) {
         Receta receta = recetaService.getRecetaById(comentario.getReceta().getId());
         comentario.setReceta(receta);
+        if (receta.getComentarios() == null) {
+            receta.setComentarios(new ArrayList<>());
+        }
         receta.getComentarios().add(comentario);
         recetaService.saveReceta(receta);
         return ResponseEntity.status(HttpStatus.CREATED).body(comentario);
@@ -90,6 +94,9 @@ public class RecetaController {
     public ResponseEntity<Valoracion> saveValoracion(@Valid @RequestBody Valoracion valoracion) {
         Receta receta = recetaService.getRecetaById(valoracion.getReceta().getId());
         valoracion.setReceta(receta);
+        if (receta.getValoraciones() == null) {
+            receta.setValoraciones(new ArrayList<>());
+        }
         receta.getValoraciones().add(valoracion);
         recetaService.saveReceta(receta);
         return ResponseEntity.status(HttpStatus.CREATED).body(valoracion);

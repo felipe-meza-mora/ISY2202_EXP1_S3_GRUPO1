@@ -20,9 +20,12 @@ import com.example.sum1.service.RecetaService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpSession;
 
+
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+
+import com.example.sum1.exception.ResourceNotFoundException;
 
 @Controller
 public class HomeController {
@@ -59,10 +62,8 @@ public class HomeController {
     @GetMapping("/home")
     public String home(Model model, @AuthenticationPrincipal Principal principal) {
         List<Receta> recetas = recetaService.getAllRecetas();
-        
         model.addAttribute("recetas", recetas);
-        model.addAttribute("isAuthenticated", principal != null); // Verificar si el usuario está autenticado
-
+        model.addAttribute("isAuthenticated", principal != null); 
         return "home";  // Cargar la plantilla Thymeleaf "home.html"
     }
 
@@ -190,12 +191,6 @@ public class HomeController {
         }
     }
 
-    // Página de acceso denegado
-    @GetMapping("/access-denied")
-    public String accessDenied() {
-        return "access-denied";  // Cargar la plantilla "access-denied.html"
-    }
-
     // Cerrar sesión y eliminar el JWT de las cookies
     @GetMapping("/logout")
     public String logout(
@@ -228,4 +223,66 @@ public class HomeController {
         return REDIRECT_HOME; // Usar constante
     }
 
+    // Página de acceso denegado
+    @GetMapping("/access-denied")
+    public String accessDenied() {
+        return "access-denied";  // Cargar la plantilla "access-denied.html"
+    }
+
+    // Página de administración
+    @GetMapping("/admin")
+    public String adminview() {
+        return "admin";  // Cargar la plantilla "admin.html"
+    }
+
+    // Página de administración de clientes
+    @GetMapping("/admin-clientes")
+    public String listarUsuarios(Model model) {
+        List<Usuario> usuarios = usuarioService.obtenerTodosLosUsuarios();
+        model.addAttribute("usuarios", usuarios);
+        return "admin-clientes";  // Cargar la plantilla "admin-clientes.html"
+    }
+
+    // Mostrar formulario de edición de cliente
+    @GetMapping("/editar/{id}")
+    public String mostrarFormularioEdicion(@PathVariable("id") Long id, Model model) {
+        Usuario usuario = usuarioService.buscarPorId(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + id));
+        model.addAttribute("usuario", usuario);
+        return "editar-cliente";  // Cargar la plantilla "editar-cliente.html"
+    }
+
+    @PostMapping("/editar/{id}")
+    public String actualizarUsuario(
+            @PathVariable("id") Long id,
+            @ModelAttribute Usuario usuario,
+            Model model) {
+        try {
+            // Buscar el usuario existente
+            Usuario usuarioExistente = usuarioService.buscarPorId(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con ID: " + id));
+
+            // Actualizar los campos del usuario
+            usuarioExistente.setUsername(usuario.getUsername());
+            usuarioExistente.setEmail(usuario.getEmail());
+            usuarioExistente.setNombre(usuario.getNombre());
+            usuarioExistente.setApellido(usuario.getApellido());
+            usuarioExistente.setRol(usuario.getRol());
+
+            // Guardar los cambios
+            usuarioService.actualizarUsuario(id, usuarioExistente);
+
+            return "redirect:/admin-clientes"; // Redirigir después de guardar
+        } catch (Exception e) {
+            model.addAttribute(ERROR_MESSAGE, "Error al actualizar el usuario: " + e.getMessage()); // Usar constante
+            return "editar-cliente"; // Volver a cargar el formulario con el error
+        }
+    }
+
+    // Eliminar cliente
+    @GetMapping("/eliminar/{id}")
+    public String eliminarUsuario(@PathVariable("id") Long id) {
+        usuarioService.eliminarUsuario(id);
+        return "redirect:/admin-clientes";  // Redirigir a la vista de administración de clientes
+    }
 }
