@@ -10,14 +10,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import java.util.Optional;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-
-
-
 
 class UsuarioServiceTest {
 
@@ -55,6 +54,62 @@ class UsuarioServiceTest {
         assertNotNull(result);
         assertEquals("encodedPassword", result.getPassword());
         verify(usuarioRepository, times(1)).save(any(Usuario.class));
+    }
+
+    // Agregar pruebas para validar campos nulos o vacíos
+
+    @Test
+    void registrarUsuario_FaltaNombre() {
+        usuario.setNombre(null);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            usuarioService.registrarUsuario(usuario);
+        }, "El nombre es obligatorio.");
+    }
+
+    @Test
+    void registrarUsuario_FaltaApellido() {
+        usuario.setApellido(null);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            usuarioService.registrarUsuario(usuario);
+        }, "El apellido es obligatorio.");
+    }
+
+    @Test
+    void registrarUsuario_FaltaUsername() {
+        usuario.setUsername(null);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            usuarioService.registrarUsuario(usuario);
+        }, "El nombre de usuario es obligatorio.");
+    }
+
+    @Test
+    void registrarUsuario_FaltaPassword() {
+        usuario.setPassword(null);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            usuarioService.registrarUsuario(usuario);
+        }, "La contraseña es obligatoria.");
+    }
+
+    @Test
+    void registrarUsuario_FaltaEmail() {
+        usuario.setEmail(null);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            usuarioService.registrarUsuario(usuario);
+        }, "El correo electrónico es obligatorio.");
+    }
+
+    @Test
+    void registrarUsuario_FaltaRol() {
+        usuario.setRol(null);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            usuarioService.registrarUsuario(usuario);
+        }, "El rol es obligatorio.");
     }
 
     @Test
@@ -125,6 +180,16 @@ class UsuarioServiceTest {
     }
 
     @Test
+    void esAdmin_NoEsAdmin() {
+        usuario.setRol(Role.ROLE_USER);  // Rol de usuario normal
+        when(usuarioRepository.findByUsername(any(String.class))).thenReturn(Optional.of(usuario));
+
+        Boolean result = usuarioService.esAdmin("johndoe");
+
+        assertFalse(result);
+    }
+
+    @Test
     void actualizarUsuario() {
         when(usuarioRepository.findById(any(Long.class))).thenReturn(Optional.of(usuario));
         when(passwordEncoder.encode(any(String.class))).thenReturn("encodedPassword");
@@ -150,6 +215,15 @@ class UsuarioServiceTest {
     }
 
     @Test
+    void actualizarUsuario_NoExiste() {
+        when(usuarioRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            usuarioService.actualizarUsuario(1L, usuario);
+        });
+    }
+
+    @Test
     void eliminarUsuario() {
         when(usuarioRepository.findById(any(Long.class))).thenReturn(Optional.of(usuario));
         doNothing().when(usuarioRepository).delete(any(Usuario.class));
@@ -157,5 +231,14 @@ class UsuarioServiceTest {
         usuarioService.eliminarUsuario(1L);
 
         verify(usuarioRepository, times(1)).delete(any(Usuario.class));
+    }
+
+    @Test
+    void eliminarUsuario_NoExiste() {
+        when(usuarioRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> {
+            usuarioService.eliminarUsuario(1L);
+        });
     }
 }

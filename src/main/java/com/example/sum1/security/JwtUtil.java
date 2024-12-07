@@ -17,11 +17,11 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    @Value("${myapp.secret-key}")
-    private String secretKey;
+    @Value("${jwt.secret}")
+    private String secret;
     
-    private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(secretKey.getBytes());
+    protected Key getSigningKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     public String extractUsername(String token) {
@@ -49,22 +49,22 @@ public class JwtUtil {
                 .getBody();
     }
 
-    private Boolean isTokenExpired(String token) {
+    public Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
-
+    
     public String generateToken(Usuario usuario) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", usuario.getRol().name());
         return createToken(claims, usuario.getUsername());
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    public String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) 
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15)) // 15 minutos
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256) 
                 .compact();
     }
